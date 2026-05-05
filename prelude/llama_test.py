@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 def main():
     # Configuration
-    data_path = './boolq/test.json'
+    data_path = '../data/boolq/test.json'
     output_path = 'result/llama_test.txt'
     
     # You can swap this to "meta-llama/Meta-Llama-3-8B-Instruct" if you want 
@@ -34,7 +34,7 @@ def main():
     # Load in bfloat16 to save VRAM, mapping to available GPUs automatically
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
-        torch_dtype=torch.float16,
+        dtype=torch.float16,
         device_map="auto",
         local_files_only=True  # Add this flag after 1st install
     )
@@ -54,19 +54,21 @@ def main():
 
         # Tokenize input
         inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+        input_length = inputs.input_ids.shape[1]  # A simple cheat to cut off the repeated content in answer
 
         # Generate response
         with torch.no_grad():
             outputs = model.generate(
                 **inputs,
-                max_new_tokens=10,      # We only need a few tokens for True/False
+                max_new_tokens=100,      # We only need a few tokens for True/False
                 max_length=None,        # <-- ADD THIS LINE to silence the warning
-                temperature=0.0,        # Greedy decoding for deterministic evaluation
+                temperature=0.01,        # Greedy decoding for deterministic evaluation
                 do_sample=True,         # Enable probabilistic sampling for dynamiv outputs
                 pad_token_id=tokenizer.eos_token_id  # end-of-sequence as padding is a common fallback.
             )
 
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True, clean_up_tokenization_spaces=False).strip().lower()
+        cheat_outputs = outputs[0][input_length:]  # The cheated outputs
+        response = tokenizer.decode(cheat_outputs, skip_special_tokens=True, clean_up_tokenization_spaces=False).strip().lower()
 
         # Parse the output
         predicted_answer = None

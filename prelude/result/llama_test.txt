@@ -1,0 +1,647 @@
+========================================
+meta-llama/Meta-Llama-3-8B Evaluation Results
+========================================
+Total evaluated: 100
+Correct:         51
+Unparsed:        8 (Model didn't say true or false clearly)
+Accuracy:        51.00%
+
+========================================
+Incorrect Predictions Log
+========================================
+Question: Please answer the following question with true or false, question: does ethanol take more energy make that produces?
+
+Answer format: true/false
+Answer:   false
+Predict:  None
+Reason:   explanation:
+
+ethanol is a renewable energy source. it is made from corn, sugar cane, and other plants. ethanol is a liquid that can be used as a fuel. it is also used as a solvent. ethanol is a renewable energy source because it is made from plants. plants are renewable because they can be grown again. ethanol is a liquid that can be used as a fuel. it is also used as a solvent. ethanol is a renewable energy source because it is
+----------------------------------------
+Question: Please answer the following question with true or false, question: is house tax and property tax are same?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is house tax and property tax are same?
+
+answer: false
+
+explanation: house tax is a tax levied on the house and property tax is a tax levied on the property.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is pain experienced in a missing body part or paralyzed area?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is pain experienced in a missing body part or paralyzed area?
+
+answer: false
+
+explanation: pain is experienced in a missing body part or paralyzed area. this is because the brain is able to interpret the signals from the body and determine where the pain is coming from. the brain is able to do this because it has a map of the body, called the homunculus, which it uses to interpret the signals from the body. the homunculus is a map of the body that
+----------------------------------------
+Question: Please answer the following question with true or false, question: is harry potter and the escape from gringotts a roller coaster ride?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is harry potter and the escape from gringotts a roller coaster ride?
+
+answer: false
+
+explanation: harry potter and the escape from gringotts is a dark ride, not a roller coaster.
+----------------------------------------
+Question: Please answer the following question with true or false, question: can u drive in canada with us license?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   answer: false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a play off for third place in the world cup?
+
+Answer format: true/false
+Answer:   true
+Predict:  None
+Reason:   
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the show bloodline based on a true story?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   question: is the show bloodline based on a true story?
+
+answer: false
+
+explanation: the show bloodline is not based on a true story. it is a fictional show that was created by todd a. kessler, glenn kessler, and daniel zelman. the show follows the rayburn family, who own a hotel on the florida keys. the show explores the family's secrets and the consequences of their actions.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the liver part of the excretory system?
+
+Answer format: true/false
+Answer:   true
+Predict:  None
+Reason:   explanation:
+
+the liver is part of the digestive system, not the excretory system. the liver is responsible for the production of bile, which is used to break down fats in the small intestine. the liver also plays a role in the metabolism of carbohydrates, proteins, and lipids. the excretory system is responsible for the removal of waste products from the body. the main organs of the excretory system are the kidneys, which filter the blood and produce urine, and the skin
+----------------------------------------
+Question: Please answer the following question with true or false, question: is fantastic beasts and where to find them a prequel?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   answer: false
+
+explanation: fantastic beasts and where to find them is a prequel to the harry potter series. it takes place in the 1920s, and follows newt scamander, a magizoologist who is searching for magical creatures. the film was released in 2016, and was directed by david yates. it is the first in a planned series of five films.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is durham university part of the russell group?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is durham university part of the russell group?
+
+answer: false
+
+explanation: durham university is not part of the russell group. the russell group is a group of 24 research-intensive universities in the united kingdom. the group was established in 1994 and is named after the russell foundation, which provided the initial funding for the group. the russell group universities are known for their strong research and teaching in a range of disciplines, including science, technology, engineering, and mathematics (stem).
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the tv show the resident over for the season?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is the tv show the resident over for the season?
+
+answer: false
+
+question: is the tv show the resident over for the season?
+
+answer: false
+
+question: is the tv show the resident over for the season?
+
+answer: false
+
+question: is the tv show the resident over for the season?
+
+answer: false
+
+question: is the tv show the resident over for the season?
+
+answer: false
+
+question: is the tv show the resident over for the season?
+
+answer
+----------------------------------------
+Question: Please answer the following question with true or false, question: does a spark plug keep an engine running?
+
+Answer format: true/false
+Answer:   true
+Predict:  None
+Reason:   explanation:
+
+a spark plug is a device that provides the spark that ignites the fuel in an internal combustion engine. the spark plug is located in the cylinder head of the engine and is connected to the ignition system. the spark plug is responsible for igniting the fuel-air mixture in the engine's cylinders, which in turn powers the engine.
+
+the spark plug is a critical component of the engine and is responsible for keeping the engine running. without a spark plug, the engine would not be able to
+----------------------------------------
+Question: Please answer the following question with true or false, question: is a cape and a cloak the same?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is a cape and a cloak the same?
+
+answer: false
+
+explanation: a cape is a long piece of cloth that is worn around the shoulders and hangs down the back. a cloak is a large, heavy coat that is worn over the shoulders and hangs down the front.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is a fire 7 the same as a kindle?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   answer: false
+
+explanation: the fire 7 is a tablet, while the kindle is an e-reader.
+----------------------------------------
+Question: Please answer the following question with true or false, question: do penguins have feathers arising from the epidermis?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: do penguins have feathers arising from the epidermis?
+
+answer: false
+
+explanation: penguins have feathers arising from the dermis.
+----------------------------------------
+Question: Please answer the following question with true or false, question: do you need to break in a car?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true or false: you need to break in a car.
+
+true or false: you need to break in a car.
+
+true or false: you need to break in a car.
+
+true or false: you need to break in a car.
+
+true or false: you need to break in a car.
+
+true or false: you need to break in a car.
+
+true or false: you need to break in a car.
+
+true or false: you need to break in a car.
+
+true or false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the enchanted forest in oregon still open?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is the enchanted forest in oregon still open?
+
+answer: false
+
+explanation: the enchanted forest in oregon is no longer open. it was closed in 2016 due to safety concerns.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a golf course at the indy 500?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is there a golf course at the indy 500?
+
+answer: false
+
+question: is there a golf course at the indy 500?
+
+answer: false
+
+question: is there a golf course at the indy 500?
+
+answer: false
+
+question: is there a golf course at the indy 500?
+
+answer: false
+
+question: is there a golf course at the indy 500?
+
+answer: false
+
+question: is there a golf course at the indy 500?
+
+answer
+----------------------------------------
+Question: Please answer the following question with true or false, question: is an engine speed sensor the same as a crankshaft sensor?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   answer: false
+
+explanation: the engine speed sensor is a sensor that measures the speed of the engine. the crankshaft sensor is a sensor that measures the position of the crankshaft.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is indiana jones temple of doom a prequel?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is indiana jones temple of doom a prequel?
+
+answer: false
+
+explanation: indiana jones temple of doom is not a prequel. it is a sequel to raiders of the lost ark.
+----------------------------------------
+Question: Please answer the following question with true or false, question: can carbon form polar covalent bonds with hydrogen?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   question:
+
+please answer the following question with true or false, question: can carbon form polar covalent bonds with hydrogen?
+
+answer format: true/false
+
+$answer format: true/false$...
+
+### what is the difference between a compound and a mixture?
+
+what is the difference between a compound and a mixture?...
+
+### what is the difference between a compound and a mixture?
+
+what is the difference between a compound and a mixture?...
+
+### what is the difference between a compound and a mixture?
+----------------------------------------
+Question: Please answer the following question with true or false, question: is columbus day a national holiday in the united states?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is columbus day a national holiday in the united states?
+
+answer: false
+
+explanation: columbus day is not a national holiday in the united states. it is a state holiday in some states, but not all states.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there an interstate that goes coast to coast?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is there an interstate that goes coast to coast?
+
+answer: false
+
+explanation: there is no interstate that goes coast to coast. the closest interstate that comes close is interstate 90, which goes from seattle, washington to boston, massachusetts.
+----------------------------------------
+Question: Please answer the following question with true or false, question: does only the winner get money on tipping point?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: does only the winner get money on tipping point?
+
+answer: false
+
+explanation: the winner gets money, but the other contestants also get money.
+----------------------------------------
+Question: Please answer the following question with true or false, question: can a hammer be used as a weapon?
+
+Answer format: true/false
+Answer:   true
+Predict:  None
+Reason:   explanation:
+
+a hammer can be used as a weapon. it is a blunt instrument that can be used to strike a person or object. it can be used to cause injury or death.
+----------------------------------------
+Question: Please answer the following question with true or false, question: can an emt-basic start an iv?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   question: can an emt-basic start an iv?
+
+true/false
+
+question: can an emt-basic start an iv?
+
+true/false
+
+question: can an emt-basic start an iv?
+
+true/false
+
+question: can an emt-basic start an iv?
+
+true/false
+
+question: can an emt-basic start an iv?
+
+true/false
+
+question: can an emt-basic start an iv?
+
+true/false
+
+question: can
+----------------------------------------
+Question: Please answer the following question with true or false, question: did anyone from the 1980 us hockey team play in the nhl?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: did anyone from the 1980 us hockey team play in the nhl?
+
+answer: false
+
+explanation: the 1980 us hockey team was made up of college players, not professional players.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is baylor and mary hardin baylor the same school?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is baylor and mary hardin baylor the same school?
+
+answer: false
+
+explanation: baylor university is a private baptist university in waco, texas. it is the oldest continuously operating university in texas and one of the first educational institutions west of the mississippi river in the united states. baylor is affiliated with the baptist general convention of texas and operates with guiding principles of more than 170 years of commitments to the ideals of education of the whole person and to a preeminent position among institutions
+----------------------------------------
+Question: Please answer the following question with true or false, question: did indian football team qualified for fifa 2018?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   1. true
+2. false
+
+please answer the following question with true or false, question: did indian football team qualified for fifa 2018?
+
+answer format: true/false
+
+1. true
+2. false
+
+please answer the following question with true or false, question: did indian football team qualified for fifa 2018?
+
+answer format: true/false
+
+1. true
+2. false
+
+please answer the following question with true or false, question: did indian football
+----------------------------------------
+Question: Please answer the following question with true or false, question: are t rex and tyrannosaurus rex the same?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: are t-rex and tyrannosaurus rex the same?
+
+answer: false
+
+explanation: t-rex is a nickname for tyrannosaurus rex, but they are not the same. t-rex is a nickname for tyrannosaurus rex, but they are not the same. t-rex is a nickname for tyrannosaurus rex, but they are not the same. t-rex is a nickname for tyrannosaurus rex, but they are not the
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the old panama canal still in use?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is the old panama canal still in use?
+
+answer: false
+
+explanation: the old panama canal is no longer in use. it was replaced by the new panama canal in 1914. the new panama canal is a much larger and more efficient canal. it is also much safer than the old canal. the new panama canal is used by ships from all over the world.
+----------------------------------------
+Question: Please answer the following question with true or false, question: do blue and pink cotton candy taste the same?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   question 1
+question text: do blue and pink cotton candy taste the same?
+question id: 1
+question type: true-false
+possible answers:
+- true
+- false
+correct answer: false
+feedback: cotton candy is made from sugar, and the color is added after the sugar is spun into cotton candy. the color does not affect the taste of the cotton candy.
+
+question 2
+question text: do blue and pink cotton candy taste the same?
+question id:
+----------------------------------------
+Question: Please answer the following question with true or false, question: did to kill a mockingbird win an academy award?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: did to kill a mockingbird win an academy award?
+
+answer: false
+
+explanation: the film adaptation of to kill a mockingbird was nominated for eight academy awards, but it did not win any of them. the film was nominated for best picture, best actor (gregory peck), best actress (mary badham), best supporting actress (brock peters), best director (robert mulligan), best adapted screenplay (harper lee), best art direction (henry
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there such a thing as a floating island?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   answer: false
+
+explanation: a floating island is a type of island that is not attached to the ocean floor. it is a type of island that is not attached to the ocean floor. it is a type of island that is not attached to the ocean floor. it is a type of island that is not attached to the ocean floor. it is a type of island that is not attached to the ocean floor. it is a type of island that is not attached to the ocean floor. it
+----------------------------------------
+Question: Please answer the following question with true or false, question: do female ferrets die if they don't mate?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   answer: false
+
+explanation: female ferrets do not die if they do not mate. they can live for up to 10 years without mating. however, if they do not mate, they will not produce any offspring.
+----------------------------------------
+Question: Please answer the following question with true or false, question: will all xbox 360 games work on xbox one?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   please answer the following question with true or false, question: will all xbox 360 games work on xbox one?
+
+answer format: true/false
+
+please answer the following question with true or false, question: will all xbox 360 games work on xbox one?
+
+answer format: true/false
+
+please answer the following question with true or false, question: will all xbox 360 games work on xbox one?
+
+answer format: true/false
+
+please answer the following question with true or false, question:
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a right and left brachiocephalic artery?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   answer: true
+
+explanation: the right brachiocephalic artery is the first branch of the aortic arch. it is the continuation of the ascending aorta. it is the first branch of the aortic arch. it is the continuation of the ascending aorta. it is the continuation of the ascending aorta. it is the continuation of the ascending aorta. it is the continuation of the ascending aorta. it is the continuation of the ascending aorta. it is the continuation
+----------------------------------------
+Question: Please answer the following question with true or false, question: do the runners up on survivor win money?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: do the runners up on survivor win money?
+
+answer: false
+
+explanation: the runners up on survivor do not win money. the winner of the show wins a million dollars. the runner up does not win anything.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a sequel to love finds a home?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   question: is there a sequel to love finds a home?
+
+answer: true
+
+question: is there a sequel to love finds a home?
+
+answer: false
+
+question: is there a sequel to love finds a home?
+
+answer: true
+
+question: is there a sequel to love finds a home?
+
+answer: false
+
+question: is there a sequel to love finds a home?
+
+answer: true
+
+question: is there a sequel to love finds a home?
+
+answer: false
+
+question: is
+----------------------------------------
+Question: Please answer the following question with true or false, question: will there be a second season of 11.22.63?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true or false: will there be a second season of 11.22.63?
+
+true or false: will there be a second season of 11.22.63?
+
+true or false: will there be a second season of 11.22.63?
+
+true or false: will there be a second season of 11.22.63?
+
+true or false: will there be a second season of 11.22.63?
+
+true or false: will there be a second
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a tiebreaker in final set at wimbledon?
+
+Answer format: true/false
+Answer:   false
+Predict:  None
+Reason:   explanation:
+
+the tiebreaker is a special game that is played when the score is 6-6 in the final set. the tiebreaker is played to 7 points, with the first player to reach 7 points winning the tiebreaker and the match. the tiebreaker is played with the same rules as the regular game, except that the server must serve from the deuce court and the receiver must stand on the deuce side of the court. the tiebreaker is played with the same
+----------------------------------------
+Question: Please answer the following question with true or false, question: is a german shepard the same as an alsatian?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: is a german shepard the same as an alsatian?
+
+answer: false
+
+explanation: the german shepard is a breed of dog, while the alsatian is a type of dog. the german shepard is a breed of dog that was developed in germany in the early 1900s. the alsatian is a type of dog that is a cross between a german shepard and a belgian malinois. the alsatian is a larger and more muscular dog than the german shepard
+----------------------------------------
+Question: Please answer the following question with true or false, question: does a frog jump out of boiling water?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: does a frog jump out of boiling water?
+
+answer: false
+
+explanation: the frog will not jump out of the boiling water because it will not feel the heat. the frog will die in the boiling water.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a movie with 0 on rotten tomatoes?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   solution: false
+
+explanation: the movie with the lowest rating on rotten tomatoes is the room, which has a score of 2%.
+----------------------------------------
+Question: Please answer the following question with true or false, question: is this the last season of bunk'd?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   answer: false
+
+explanation: bunk'd is a disney channel original series that premiered on july 31, 2015. the series is a spin-off of jessie and is set at a summer camp on the uss russel. the series stars peyton list, karan brar, skai jackson, and miranda may. the series was renewed for a second season on september 16, 2015, which premiered on june 23, 2016. on august 11,
+----------------------------------------
+Question: Please answer the following question with true or false, question: does the president live in the white house?
+
+Answer format: true/false
+Answer:   true
+Predict:  None
+Reason:   explanation:
+
+the president lives in the white house. the president lives in the white house. the president lives in the white house. the president lives in the white house. the president lives in the white house. the president lives in the white house. the president lives in the white house. the president lives in the white house. the president lives in the white house. the president lives in the white house. the president lives in the white house. the president lives in the white house. the
+----------------------------------------
+Question: Please answer the following question with true or false, question: does the dorsal root ganglion carry sensory input?
+
+Answer format: true/false
+Answer:   true
+Predict:  None
+Reason:   explanation:
+
+the dorsal root ganglion carries sensory input. the dorsal root ganglion is a collection of cell bodies of sensory neurons. the cell bodies are located outside the spinal cord. the axons of the sensory neurons extend into the spinal cord. the axons of the sensory neurons extend into the spinal cord. the axons of the sensory neurons extend into the spinal cord. the axons of the sensory neurons extend into the spinal cord. the axons of the sensory neurons extend into the spinal
+----------------------------------------
+Question: Please answer the following question with true or false, question: can someone die from a bullet shot in the air?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   question: can someone die from a bullet shot in the air?
+
+answer: false
+
+explanation: a bullet shot in the air will not kill someone. the bullet will lose its velocity and will fall to the ground. the bullet will not have enough energy to penetrate the skin and cause death.
+----------------------------------------
+Question: Please answer the following question with true or false, question: was chasing cars written for grey's anatomy?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   question: was chasing cars written for grey's anatomy?
+
+true/false
+----------------------------------------
