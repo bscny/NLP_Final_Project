@@ -6,10 +6,11 @@ from tqdm import tqdm
 def main():
     # Configuration
     data_path = '../data/boolq/test.json'
-    output_path = 'result/llama_test.txt'
+    output_path = 'result/llama_instruct_test.txt'
     
     # You can swap this to "meta-llama/Meta-Llama-3-8B-Instruct" if you want 
-    model_id = "meta-llama/Meta-Llama-3-8B"
+    # model_id = "meta-llama/Meta-Llama-3-8B"
+    model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
     
     # Load the dataset
     print(f"Loading dataset from {data_path}...")
@@ -25,7 +26,7 @@ def main():
     print(f"Loading model {model_id}...")
     tokenizer = AutoTokenizer.from_pretrained(
         model_id,
-        local_files_only=True  # Add this flag after 1st install
+        # local_files_only=True  # Add this flag after 1st install
     )
     
     # LLaMA 3 does not have a dedicated pad token by default
@@ -36,7 +37,7 @@ def main():
         model_id,
         dtype=torch.float16,
         device_map="auto",
-        local_files_only=True  # Add this flag after 1st install
+        # local_files_only=True  # Add this flag after 1st install
     )
     
     model.eval()
@@ -54,7 +55,7 @@ def main():
 
         # Tokenize input
         inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-        input_length = inputs.input_ids.shape[1]  # A simple cheat to cut off the repeated content in answer
+        # input_length = inputs.input_ids.shape[1]  # A simple cheat to cut off the repeated content in answer
 
         # Generate response
         with torch.no_grad():
@@ -67,8 +68,8 @@ def main():
                 pad_token_id=tokenizer.eos_token_id  # end-of-sequence as padding is a common fallback.
             )
 
-        cheat_outputs = outputs[0][input_length:]  # The cheated outputs
-        response = tokenizer.decode(cheat_outputs, skip_special_tokens=True, clean_up_tokenization_spaces=False).strip().lower()
+        # cheat_outputs = outputs[0][input_length:]  # The cheated outputs
+        response = tokenizer.decode(outputs[0], skip_special_tokens=True, clean_up_tokenization_spaces=False).strip().lower()
 
         # Parse the output
         predicted_answer = None
