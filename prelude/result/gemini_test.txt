@@ -1,0 +1,144 @@
+========================================
+gemini-3.1-flash-lite-preview Evaluation Results
+========================================
+Total evaluated: 100
+Correct:         81
+Unparsed:        0 (Model didn't say true or false clearly)
+Accuracy:        81.00%
+
+========================================
+Incorrect Predictions Log
+========================================
+Question: Please answer the following question with true or false, question: will there be a season 8 of vampire diaries?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is a cape and a cloak the same?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is a fire 7 the same as a kindle?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: do you need to break in a car?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the enchanted forest in oregon still open?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a golf course at the indy 500?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: can carbon form polar covalent bonds with hydrogen?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: does only the winner get money on tipping point?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the us womens soccer team in the world cup?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: do they still have fox hunts in england?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: has wisconsin ever been in the little league world series?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a group called the five heartbeats?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: is baylor and mary hardin baylor the same school?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: do you need a pal to possess ammunition?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: do blue and pink cotton candy taste the same?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true 
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a tiebreaker in final set at wimbledon?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: does a frog jump out of boiling water?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is anne with an e filmed on pei?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is angular frequency and angular velocity the same?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------

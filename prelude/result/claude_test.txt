@@ -1,0 +1,209 @@
+========================================
+claude-haiku-4-5-20251001 Evaluation Results
+========================================
+Total evaluated: 100
+Correct:         74
+Unparsed:        3 (Model didn't say true or false clearly)
+Accuracy:        74.00%
+
+========================================
+Incorrect Predictions Log
+========================================
+Question: Please answer the following question with true or false, question: is house tax and property tax are same?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is barq's root beer a pepsi product?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: will there be a season 8 of vampire diaries?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+
+the vampire diaries ended with
+----------------------------------------
+Question: Please answer the following question with true or false, question: was the movie strangers based on a true story?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the tv show the resident over for the season?
+
+Answer format: true/false
+Answer:   true
+Predict:  None
+Reason:   i don't have access to current information about "
+----------------------------------------
+Question: Please answer the following question with true or false, question: is a cape and a cloak the same?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is a fire 7 the same as a kindle?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+
+the fire 7 is a tablet
+----------------------------------------
+Question: Please answer the following question with true or false, question: do you need to break in a car?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a golf course at the indy 500?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is an engine speed sensor the same as a crankshaft sensor?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+
+an engine speed sensor and a crank
+----------------------------------------
+Question: Please answer the following question with true or false, question: can carbon form polar covalent bonds with hydrogen?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: does only the winner get money on tipping point?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+
+on tipping point, all three
+----------------------------------------
+Question: Please answer the following question with true or false, question: do the jets and giants share a stadium?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+
+the new york jets and new york giants
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the us womens soccer team in the world cup?
+
+Answer format: true/false
+Answer:   true
+Predict:  None
+Reason:   i don't have access to current information about ongoing
+----------------------------------------
+Question: Please answer the following question with true or false, question: has wisconsin ever been in the little league world series?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: does damon and elena get together in season 3?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: is the other boleyn girl part of a series?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a group called the five heartbeats?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: is baylor and mary hardin baylor the same school?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+
+baylor university and mary har
+----------------------------------------
+Question: Please answer the following question with true or false, question: can you get the death penalty as a minor?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+
+(in the united states, while the
+----------------------------------------
+Question: Please answer the following question with true or false, question: do you need a pal to possess ammunition?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: do blue and pink cotton candy taste the same?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: is there a sequel to love finds a home?
+
+Answer format: true/false
+Answer:   false
+Predict:  true
+Reason:   true
+----------------------------------------
+Question: Please answer the following question with true or false, question: does a frog jump out of boiling water?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+
+the famous "boiling frog"
+----------------------------------------
+Question: Please answer the following question with true or false, question: is this the last season of bunk'd?
+
+Answer format: true/false
+Answer:   true
+Predict:  false
+Reason:   false
+----------------------------------------
+Question: Please answer the following question with true or false, question: did the girl in the lost world die?
+
+Answer format: true/false
+Answer:   false
+Predict:  None
+Reason:   i need more context to answer this accurately. "
+----------------------------------------
