@@ -1,14 +1,9 @@
-import json
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
-from transformers import AutoTokenizer, AutoModelForCausalLM, get_linear_schedule_with_warmup
-from torch.optim import AdamW
-import numpy as np
-from tqdm import tqdm
+from transformers import AutoModelForCausalLM
+from torchinfo import summary
 import math
-import os
 
 class DenseLoRAEncoder(nn.Module):
     """Shared across all adaptation layers"""
@@ -121,3 +116,47 @@ def get_trainable_params(model):
     trainable_count = sum(p.numel() for _, p in trainable)
     print(f"Trainable: {trainable_count:,} / Total: {total:,} ({100*trainable_count/total:.4f}%)")
     return trainable
+
+if __name__ == "__main__":
+    model_id = "meta-llama/Meta-Llama-3-8B"
+
+    # Load the original model
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id, 
+        torch_dtype=torch.float16, 
+        device_map="auto"
+    )
+    
+    # Mocking the training stage to disable token cache for inference
+    model.config.use_cache = False
+    # Freeze all base params
+    for p in model.parameters():
+        p.requires_grad = False
+
+    print("THE TARGET BASELINE MODEL =====================================================")
+    print(model)
+
+    summary(model)
+    print("===============================================================================")
+
+    print("THE TARGET BASELINE MODEL =====================================================")
+    print(model)
+
+    summary(model)
+    print("===============================================================================")
+    
+    # Inject DenseLoRA
+    model = inject_dense_lora(
+        model,
+        rank=32,
+        # target_modules=("q_proj", "k_proj", "v_proj", "up_proj", "down_proj"),
+    )
+    print("THE DENSELORA MODEL =====================================================")
+    print(model)
+
+    summary(model)
+    print("===============================================================================")
+    
+    print("THE REDUCTION RATIO ===========================================================")
+    get_trainable_params(model)
+    print("===============================================================================")
