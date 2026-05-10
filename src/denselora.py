@@ -139,12 +139,6 @@ if __name__ == "__main__":
     summary(model)
     print("===============================================================================")
 
-    print("THE TARGET BASELINE MODEL =====================================================")
-    print(model)
-
-    summary(model)
-    print("===============================================================================")
-    
     # Inject DenseLoRA
     model = inject_dense_lora(
         model,
