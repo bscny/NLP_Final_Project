@@ -33,12 +33,14 @@ class DenseLoRALinear(nn.Module):
     ĥ = W0 * h + Decoder(M * Encoder(h))
     M is unique per layer; Encoder/Decoder are shared.
     """
-    def __init__(self, base_layer: nn.Linear, encoder: DenseLoRAEncoder, decoder: DenseLoRADecoder, rank: int):
+    def __init__(self, base_layer: nn.Linear, encoder: DenseLoRAEncoder, decoder: DenseLoRADecoder, rank: int, dropout: float = 0.05):
         super().__init__()
         self.base_layer = base_layer
         self.encoder = encoder
         self.rank = rank
         self.decoder = decoder
+        
+        self.dropout = nn.Dropout(p=dropout) if dropout > 0.0 else nn.Identity()
 
         # Unique dense matrix per layer
         self.M = nn.Parameter(torch.empty(rank, rank))
@@ -50,13 +52,14 @@ class DenseLoRALinear(nn.Module):
 
     def forward(self, x):
         base_out = self.base_layer(x)
-        h1 = self.encoder(x)          # (..., r)
+        x_dropped = self.dropout(x)
+        h1 = self.encoder(x_dropped)          # (..., r)
         h1 = h1 @ self.M.T            # (..., r)
         h2 = self.decoder(h1)         # (..., d)
         return base_out + h2
 
 
-def inject_dense_lora(model, rank: int, target_modules=("q_proj", "k_proj", "v_proj", "up_proj", "down_proj")):
+def inject_dense_lora(model, rank: int, dropout: float = 0.05, target_modules=("q_proj", "k_proj", "v_proj", "up_proj", "down_proj")):
     """
     Inject DenseLoRA into target linear layers.
     Encoder/Decoder are shared globally across all injected layers.
@@ -104,7 +107,7 @@ def inject_dense_lora(model, rank: int, target_modules=("q_proj", "k_proj", "v_p
         key = (module.in_features, module.out_features)
         enc, dec = shared_map[key]
         parent, attr = get_parent_and_attr(model, name)
-        dense_lora_layer = DenseLoRALinear(module, enc, dec, rank)
+        dense_lora_layer = DenseLoRALinear(module, enc, dec, rank, dropout)
         setattr(parent, attr, dense_lora_layer)
 
     return model
@@ -122,8 +125,8 @@ if __name__ == "__main__":
 
     # Load the original model
     model = AutoModelForCausalLM.from_pretrained(
-        model_id, 
-        torch_dtype=torch.float16, 
+        model_id,
+        torch_dtype=torch.bfloat16, 
         device_map="auto"
     )
     
