@@ -24,12 +24,6 @@ class DenseLoRATrainer(Trainer):
         torch.save(lora_weights, os.path.join(output_dir, "denselora_adapters.pt"))
         print(f"\nDenseLoRA weights safely saved to {output_dir}")
 
-    def log(self, logs, start_time=None):
-        super().log(logs, start_time)
-
-        with open("./logs/train.log", "a") as f:
-            f.write(str(logs) + "\n")
-
 # Data Loading & Masking
 def format_and_tokenize(sample, tokenizer):
     instruction = sample["instruction"].strip()
