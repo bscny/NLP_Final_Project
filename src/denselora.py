@@ -13,7 +13,7 @@ class DenseLoRAEncoder(nn.Module):
         nn.init.kaiming_uniform_(self.We.weight, a=math.sqrt(5))
 
     def forward(self, x):
-        return F.tanh(self.We(x))
+        return F.gelu(self.We(x))
 
 
 class DenseLoRADecoder(nn.Module):
@@ -24,7 +24,7 @@ class DenseLoRADecoder(nn.Module):
         nn.init.zeros_(self.Wd.weight)
 
     def forward(self, x):
-        return F.tanh(self.Wd(x))
+        return F.gelu(self.Wd(x))
 
 
 class DenseLoRALinear(nn.Module):
@@ -33,7 +33,7 @@ class DenseLoRALinear(nn.Module):
     ĥ = W0 * h + Decoder(M * Encoder(h))
     M is unique per layer; Encoder/Decoder are shared.
     """
-    def __init__(self, base_layer: nn.Linear, encoder: DenseLoRAEncoder, decoder: DenseLoRADecoder, rank: int, dropout: float = 0.05):
+    def __init__(self, base_layer: nn.Linear, encoder: DenseLoRAEncoder, decoder: DenseLoRADecoder, rank: int, alpha: int, dropout: float = 0.05):
         super().__init__()
         self.base_layer = base_layer
         self.encoder = encoder
@@ -41,6 +41,9 @@ class DenseLoRALinear(nn.Module):
         self.decoder = decoder
         
         self.dropout = nn.Dropout(p=dropout) if dropout > 0.0 else nn.Identity()
+        
+        self.alpha = alpha
+        self.scaling = self.alpha / self.rank
 
         # Unique dense matrix per layer
         self.M = nn.Parameter(torch.empty(rank, rank))
@@ -52,14 +55,20 @@ class DenseLoRALinear(nn.Module):
 
     def forward(self, x):
         base_out = self.base_layer(x)
-        x_dropped = self.dropout(x)
-        h1 = self.encoder(x_dropped)          # (..., r)
-        h1 = h1 @ self.M.T            # (..., r)
-        h2 = self.decoder(h1)         # (..., d)
-        return base_out + h2
+        
+        h1 = self.dropout(x)
+        h1 = self.encoder(h1)
+        
+        h2 = self.dropout(h1)
+        h2 = h2 @ self.M.T
+        
+        h3 = self.decoder(h2)
+        h3 = self.dropout(h3)
+        
+        return base_out + (h3 * self.scaling)
 
 
-def inject_dense_lora(model, rank: int, dropout: float = 0.05, target_modules=("q_proj", "k_proj", "v_proj", "up_proj", "down_proj")):
+def inject_dense_lora(model, rank: int, alpha: int, dropout: float = 0.05, target_modules=("q_proj", "k_proj", "v_proj", "up_proj", "down_proj")):
     """
     Inject DenseLoRA into target linear layers.
     Encoder/Decoder are shared globally across all injected layers.
@@ -67,6 +76,10 @@ def inject_dense_lora(model, rank: int, dropout: float = 0.05, target_modules=("
     # Freeze all base params before injecting
     for p in model.parameters():
         p.requires_grad = False
+        
+    # Capture base model's device & dtype BEFORE touching anything
+    model_device = next(model.parameters()).device
+    model_dtype  = next(model.parameters()).dtype
 
     # Collect (name, module, parent, attr) for all target layers
     targets = []
@@ -77,7 +90,7 @@ def inject_dense_lora(model, rank: int, dropout: float = 0.05, target_modules=("
     if not targets:
         raise ValueError("No target modules found.")
 
-    # Build one shared Encoder and Decoder
+    # Build one shared Encoder and Decoder pair
     # Use the first target to infer dimensions
     # All attention projections share in_features of 4096 but
     # MLP projections may differ, we handle per-layer encoders for different sizes
@@ -91,8 +104,8 @@ def inject_dense_lora(model, rank: int, dropout: float = 0.05, target_modules=("
         
         if key not in shared_map:
             # Create the shared modules
-            enc = DenseLoRAEncoder(module.in_features, rank)
-            dec = DenseLoRADecoder(rank, module.out_features)
+            enc = DenseLoRAEncoder(module.in_features, rank).to(device=model_device, dtype=model_dtype)
+            dec = DenseLoRADecoder(rank, module.out_features).to(device=model_device, dtype=model_dtype)
             shared_map[key] = (enc, dec)
             
             # Register them to PyTorch immediately so gradients are tracked
@@ -111,7 +124,7 @@ def inject_dense_lora(model, rank: int, dropout: float = 0.05, target_modules=("
         key = (module.in_features, module.out_features)
         enc, dec = shared_map[key]
         parent, attr = get_parent_and_attr(model, name)
-        dense_lora_layer = DenseLoRALinear(module, enc, dec, rank, dropout)
+        dense_lora_layer = DenseLoRALinear(module, enc, dec, rank, alpha, dropout).to(device=model_device, dtype=model_dtype)
         setattr(parent, attr, dense_lora_layer)
 
     return model
@@ -150,6 +163,7 @@ if __name__ == "__main__":
     model = inject_dense_lora(
         model,
         rank=32,
+        alpha=32,
         # target_modules=("q_proj", "k_proj", "v_proj", "up_proj", "down_proj"),
     )
     print("THE DENSELORA MODEL =====================================================")

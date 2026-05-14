@@ -3,31 +3,12 @@ import json
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, DataCollatorForSeq2Seq
 from datasets import Dataset
-import logging
-from transformers.utils import logging as hf_logging
 
-# My Custom modules
+# Custom Modules
 from src.denselora import inject_dense_lora, get_trainable_params
+import settings
 
-# ==========================================
-# HYPER-PARAMETERS (From the Paper)
-# ==========================================
-MODEL_ID = "meta-llama/Meta-Llama-3-8B"
-DATA_PATH = "./data/commonsense_170k.json"
-OUTPUT_DIR = "./denselora_weights"
-LOG_DIR = "./logs"
-RANK = 32
-DROPOUT = 0.05
-MAX_SEQ_LENGTH = 512
-
-BATCH_SIZE = 8
-GRAD_ACCUM_STEPS = 2
-EPOCHS = 2
-LR = 3e-4
-WARMUP_STEPS = 100
-
-# 2. Custom Trainer (The Secret Sauce)
-# ==========================================
+# Custom Trainer to ONLY save the denseLoRa weights
 class DenseLoRATrainer(Trainer):
     # Reference here: https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.save_model
     def save_model(self, output_dir: str | None = None, _internal_call: bool = False):
@@ -48,23 +29,28 @@ class DenseLoRATrainer(Trainer):
         with open("./logs/train.log", "a") as f:
             f.write(str(logs) + "\n")
 
-# ==========================================
-# 2. Data Loading & Masking
-# ==========================================
+# Data Loading & Masking
 def format_and_tokenize(sample, tokenizer):
     instruction = sample["instruction"].strip()
     inp = sample.get("input", "").strip()
     output = sample["output"].strip()
 
-    prompt = f"Below is an instruction that describes a task{' paired with an input' if inp else ''}. Write a response that appropriately completes the request.\n\n### Instruction:\n{instruction}\n\n"
-    if inp: prompt += f"### Input:\n{inp}\n\n"
+    # Construct Alpaca-style prompt
+    prompt = (
+        f"Below is an instruction that describes a task"
+        f"{' paired with an input' if inp else ''}. "
+        f"Write a response that appropriately completes the request.\n\n"
+        f"### Instruction:\n{instruction}\n\n"
+    )
+    if inp:
+        prompt += f"### Input:\n{inp}\n\n"
     prompt += "### Response:\n"
 
     full_text = prompt + output + tokenizer.eos_token
     
-    # Tokenize full text and prompt
-    full_enc = tokenizer(full_text, truncation=True, max_length=MAX_SEQ_LENGTH, padding=False)
-    prompt_len = len(tokenizer(prompt, truncation=True, max_length=MAX_SEQ_LENGTH, padding=False)["input_ids"])
+    # Tokenize full text and prompt (No padding, we will do that in Collator)
+    full_enc = tokenizer(full_text, truncation=True, max_length=settings.MAX_SEQ_LENGTH, padding=False)
+    prompt_len = len(tokenizer(prompt, truncation=True, max_length=settings.MAX_SEQ_LENGTH, padding=False)["input_ids"])
 
     labels = full_enc["input_ids"].copy()
     labels[:prompt_len] = [-100] * prompt_len # Mask prompt
@@ -79,29 +65,30 @@ def format_and_tokenize(sample, tokenizer):
 # 3. Main Training Loop
 # ==========================================
 def main():
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    os.makedirs(LOG_DIR, exist_ok=True)
+    # Soft Creation if Needed
+    os.makedirs(settings.OUTPUT_DIR, exist_ok=True)
+    os.makedirs(settings.LOG_DIR, exist_ok=True)
 
     print("Loading Model & Tokenizer...")
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+    tokenizer = AutoTokenizer.from_pretrained(settings.MODEL_ID)
     tokenizer.pad_token = tokenizer.eos_token
 
-    model = AutoModelForCausalLM.from_pretrained(MODEL_ID, torch_dtype=torch.bfloat16, device_map="auto")
-    model.config.use_cache = False 
+    model = AutoModelForCausalLM.from_pretrained(settings.MODEL_ID, torch_dtype=settings.D_TYPE, device_map=settings.DEVICE)
+    model.config.use_cache = False  # Save vRam for training
 
     print("Injecting DenseLoRA...")
-    model = inject_dense_lora(model, RANK, DROPOUT)
+    model = inject_dense_lora(model, settings.RANK, settings.ALPHA, settings.DROPOUT)
     
     get_trainable_params(model)
 
     print("Processing Data...")
-    with open(DATA_PATH, 'r', encoding='utf-8') as f:
+    with open(settings.TRAINING_DATA_PATH, 'r', encoding='utf-8') as f:
         raw_data = json.load(f)
     
-    hf_dataset = Dataset.from_list(raw_data)
-    hf_dataset = hf_dataset.map(
+    train_set = Dataset.from_list(raw_data)
+    train_set = train_set.map(
         lambda x: format_and_tokenize(x, tokenizer), 
-        remove_columns=hf_dataset.column_names,
+        remove_columns=train_set.column_names,
         desc="Tokenizing & Masking"
     )
     
@@ -109,15 +96,15 @@ def main():
     
     print("Configuring Trainer...")
     training_args = TrainingArguments(
-        output_dir=OUTPUT_DIR,
-        per_device_train_batch_size=BATCH_SIZE,
-        gradient_accumulation_steps=GRAD_ACCUM_STEPS,
-        learning_rate=LR,
+        output_dir=settings.OUTPUT_DIR,
+        per_device_train_batch_size=settings.BATCH_SIZE,
+        gradient_accumulation_steps=settings.GRAD_ACCUM_STEPS,
+        learning_rate=settings.LR,
         lr_scheduler_type="linear",
-        warmup_steps=WARMUP_STEPS,
-        num_train_epochs=EPOCHS,
-        logging_steps=500,
-        save_strategy="epoch",      # Saves at the end of each epoch using our custom logic
+        warmup_steps=settings.WARMUP_STEPS,
+        num_train_epochs=settings.EPOCHS,
+        logging_steps=settings.LOGGING_STEPS,
+        save_strategy="epoch",      # Saves at the end of each epoch using custom logic
         bf16=True,                  # Faster training on RTX 5090
         optim="adamw_torch",
         report_to="none",           # Set to "wandb" if you track experiments
@@ -127,7 +114,7 @@ def main():
     trainer = DenseLoRATrainer(
         model=model,
         args=training_args,
-        train_dataset=hf_dataset,
+        train_dataset=train_set,
         data_collator=data_collator,
     )
 
