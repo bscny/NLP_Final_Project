@@ -3,6 +3,8 @@ import json
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, DataCollatorForSeq2Seq
 from datasets import Dataset
+import logging
+from transformers.utils import logging as hf_logging
 
 # My Custom modules
 from src.denselora import inject_dense_lora, get_trainable_params
@@ -13,6 +15,7 @@ from src.denselora import inject_dense_lora, get_trainable_params
 MODEL_ID = "meta-llama/Meta-Llama-3-8B"
 DATA_PATH = "./data/commonsense_170k.json"
 OUTPUT_DIR = "./denselora_weights"
+LOG_DIR = "./logs"
 RANK = 32
 DROPOUT = 0.05
 MAX_SEQ_LENGTH = 512
@@ -38,6 +41,12 @@ class DenseLoRATrainer(Trainer):
         lora_weights = {k: v for k, v in self.model.state_dict().items() if k in trainable_names}
         torch.save(lora_weights, os.path.join(output_dir, "denselora_adapters.pt"))
         print(f"\nDenseLoRA weights safely saved to {output_dir}")
+
+    def log(self, logs, start_time=None):
+        super().log(logs, start_time)
+
+        with open("./logs/train.log", "a") as f:
+            f.write(str(logs) + "\n")
 
 # ==========================================
 # 2. Data Loading & Masking
@@ -71,6 +80,7 @@ def format_and_tokenize(sample, tokenizer):
 # ==========================================
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
+    os.makedirs(LOG_DIR, exist_ok=True)
 
     print("Loading Model & Tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
@@ -106,7 +116,7 @@ def main():
         lr_scheduler_type="linear",
         warmup_steps=WARMUP_STEPS,
         num_train_epochs=EPOCHS,
-        logging_steps=10,
+        logging_steps=500,
         save_strategy="epoch",      # Saves at the end of each epoch using our custom logic
         bf16=True,                  # Faster training on RTX 5090
         optim="adamw_torch",

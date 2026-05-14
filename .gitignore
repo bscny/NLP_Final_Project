@@ -1,7 +1,12 @@
 venv
+__pycache__
 
 test*
 
 .env
 
 data
+
+denselora_weights
+
+logs

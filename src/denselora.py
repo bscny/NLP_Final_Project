@@ -64,6 +64,10 @@ def inject_dense_lora(model, rank: int, dropout: float = 0.05, target_modules=("
     Inject DenseLoRA into target linear layers.
     Encoder/Decoder are shared globally across all injected layers.
     """
+    # Freeze all base params before injecting
+    for p in model.parameters():
+        p.requires_grad = False
+
     # Collect (name, module, parent, attr) for all target layers
     targets = []
     for name, module in model.named_modules():
