@@ -1,6 +1,7 @@
 import os
 import json
 import torch
+import wandb
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, DataCollatorForSeq2Seq
 from datasets import Dataset
 
@@ -61,13 +62,25 @@ def format_and_tokenize(sample, tokenizer):
         "labels": labels
     }
 
-# ==========================================
-# 3. Main Training Loop
-# ==========================================
+# Main Training Loop
 def main():
     # Soft Creation if Needed
     os.makedirs(settings.OUTPUT_DIR, exist_ok=True)
-    os.makedirs(settings.LOG_DIR, exist_ok=True)
+    
+    # Initialize WandB
+    print("Initializing Weights & Biases...")
+    wandb.init(
+        project="DenseLoRA-Training", # Name of the project in the WandB dashboard
+        name="run-rtx5090",           # The run name
+        config={
+            "learning_rate": settings.LR,
+            "architecture": settings.MODEL_ID,
+            "epochs": settings.EPOCHS,
+            "batch_size": settings.BATCH_SIZE,
+            "rank": settings.RANK,
+            "alpha": settings.ALPHA
+        }
+    )
 
     print("Loading Model & Tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(settings.MODEL_ID)
@@ -107,7 +120,7 @@ def main():
         save_strategy="epoch",      # Saves at the end of each epoch using custom logic
         bf16=True,                  # Faster training on RTX 5090
         optim="adamw_torch",
-        report_to="none",           # Set to "wandb" if you track experiments
+        report_to="wandb",
         gradient_checkpointing=True # Keeps VRAM low
     )
 
@@ -120,6 +133,10 @@ def main():
 
     print("Starting Training...")
     trainer.train()
+    
+    # Finish the WandB run cleanly
+    wandb.finish()
+    
     print("Done!")
 
 if __name__ == "__main__":
