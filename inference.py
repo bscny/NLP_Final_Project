@@ -1,4 +1,6 @@
 import torch
+import json
+from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Custom Modules
@@ -26,6 +28,7 @@ def load_model():
     print("Loading tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(settings.MODEL_ID)
     tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = "left"  # for inference mode
 
     print("Loading base model...")
     model = AutoModelForCausalLM.from_pretrained(
@@ -56,55 +59,88 @@ def load_model():
     return model, tokenizer
 
 # Inference
-def predict(model, tokenizer, instruction: str, inp: str = "") -> str:
-    prompt = build_prompt(instruction, inp)
+def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
+    """
+    Takes in the model, tokenizer, and dataset, processes them in batches, 
+    and returns the overall accuracy.
+    """
+    correct = 0
+    unparsed = 0
+    total = len(data)
 
-    inputs = tokenizer(
-        prompt,
-        return_tensors="pt",
-        truncation=True,
-        max_length=settings.MAX_SEQ_LENGTH,
-    ).to(settings.DEVICE)
+    for i in tqdm(range(0, total, batch_size), desc="Evaluating Batches"):
+        batch_samples = data[i : i + batch_size]
+        
+        # Build prompts for the entire batch
+        prompts = [
+            build_prompt(sample["instruction"], sample.get("input", "")) 
+            for sample in batch_samples
+        ]
 
-    with torch.inference_mode():
-        output_ids = model.generate(
-            **inputs,
-            do_sample=True,
+        # Tokenize the batch
+        inputs = tokenizer(
+            prompts,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=settings.MAX_SEQ_LENGTH,
+        ).to(settings.DEVICE)
+
+        # Generate outputs
+        with torch.inference_mode():
+            output_ids = model.generate(
+                **inputs,
+                max_new_tokens=settings.MAX_NEW_TOKENS,
+                temperature=settings.TEMPERATURE,
+                top_p=settings.TOP_P,
+                top_k=settings.TOP_K,
+                num_beams=settings.NUM_BEAMS,
+                pad_token_id=tokenizer.eos_token_id,
+            )
+
+        # Decode only the newly generated tokens (strip the prompt)
+        prompt_length = inputs["input_ids"].shape[1]
+        new_tokens = output_ids[:, prompt_length:]
+
+        # Decode the batch
+        responses = tokenizer.batch_decode(new_tokens, skip_special_tokens=True)
+
+        # Parse and evaluate
+        for sample, response in zip(batch_samples, responses):
+            response_lower = response.strip().lower()
+            predicted_answer = None
             
-            max_new_tokens=settings.MAX_NEW_TOKENS,
-            temperature=settings.TEMPERATURE,
-            top_p=settings.TOP_P,
-            top_k=settings.TOP_K,
-            num_beams=settings.NUM_BEAMS,
-            
-            eos_token_id=tokenizer.eos_token_id,
-            pad_token_id=tokenizer.eos_token_id,
-        )
+            # Extract true/false logic
+            if "true" in response_lower and "false" in response_lower:
+                predicted_answer = "true" if response_lower.find("true") < response_lower.find("false") else "false"
+            elif "true" in response_lower:
+                predicted_answer = "true"
+            elif "false" in response_lower:
+                predicted_answer = "false"
+            else:
+                unparsed += 1
 
-    # Decode only the newly generated tokens (strip the prompt)
-    new_tokens = output_ids[0][inputs["input_ids"].shape[-1]:]
-    return tokenizer.decode(new_tokens, skip_special_tokens=True)
+            # Check correctness
+            expected_answer = sample["answer"].strip().lower()
+            if predicted_answer == expected_answer:
+                correct += 1
+
+    # Calculate and print final metrics
+    accuracy = (correct / total) * 100
+    
+    print("\n--- Evaluation Complete ---")
+    print(f"Total evaluated : {total}")
+    print(f"Correct         : {correct}")
+    print(f"Unparsed        : {unparsed}")
+    print(f"Accuracy        : {accuracy:.2f}%")
+    
+    return accuracy
 
 if __name__ == "__main__":
     model, tokenizer = load_model()
 
-    samples = [
-        {
-            "instruction": "Please answer the following question with true or false, "
-                           "question: does ethanol take more energy make that produces?\n\n"
-                           "Answer format: true/false",
-            "input": "",
-        },
-        {
-            "instruction": "Please answer the following question with true or false, "
-                           "question: is house tax and property tax are same?\n\n"
-                           "Answer format: true/false",
-            "input": "",
-        },
-    ]
+    print("Processing Data...")
+    with open(settings.BOOLQ_DATA_PATH, 'r', encoding='utf-8') as f:
+        samples = json.load(f)
 
-    for sample in samples:
-        response = predict(model, tokenizer, sample["instruction"], sample["input"])
-        print(f"Instruction : {sample['instruction']}")
-        print(f"Response    : {response}")
-        print("-" * 60)
+    final_accuracy = evaluate_batch(model, tokenizer, samples, settings.BATCH_SIZE * settings.GRAD_ACCUM_STEPS)

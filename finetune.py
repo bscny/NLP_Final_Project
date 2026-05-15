@@ -65,7 +65,7 @@ def main():
     print("Initializing Weights & Biases...")
     wandb.init(
         project="DenseLoRA-Training", # Name of the project in the WandB dashboard
-        name="run-rtx5090",           # The run name
+        name=settings.WANDB_RUN_NAME, # The run name
         config={
             "learning_rate": settings.LR,
             "architecture": settings.MODEL_ID,
