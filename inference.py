@@ -1,5 +1,6 @@
 import torch
 import json
+import re
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -67,6 +68,10 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
     correct = 0
     unparsed = 0
     total = len(data)
+    
+    # Compile a regex pattern to catch ANY of the 8 dataset answer formats
+    # \b ensures we match exact words (so 'answer1' doesn't accidentally match 'answer10')
+    answer_pattern = re.compile(r'\b(true|false|answer\d|ending\d|solution\d|option\d)\b')
 
     for i in tqdm(range(0, total, batch_size), desc="Evaluating Batches"):
         batch_samples = data[i : i + batch_size]
@@ -96,6 +101,8 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
                 top_k=settings.TOP_K,
                 num_beams=settings.NUM_BEAMS,
                 pad_token_id=tokenizer.eos_token_id,
+                
+                max_length=None,   # ADD THIS LINE to silence the max_new_tokens warning
             )
 
         # Decode only the newly generated tokens (strip the prompt)
@@ -108,17 +115,17 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
         # Parse and evaluate
         for sample, response in zip(batch_samples, responses):
             response_lower = response.strip().lower()
-            predicted_answer = None
             
-            # Extract true/false logic
-            if "true" in response_lower and "false" in response_lower:
-                predicted_answer = "true" if response_lower.find("true") < response_lower.find("false") else "false"
-            elif "true" in response_lower:
-                predicted_answer = "true"
-            elif "false" in response_lower:
-                predicted_answer = "false"
+            # Use Regex to find the first valid answer format in the model's output
+            match = answer_pattern.search(response_lower)
+            
+            if match:
+                predicted_answer = match.group(0)
             else:
-                unparsed += 1
+                # Fallback: if regex fails, see if the exact expected string is just floating in the response
+                predicted_answer = expected_answer if expected_answer in response_lower else None
+                if not predicted_answer:
+                    unparsed += 1
 
             # Check correctness
             expected_answer = sample["answer"].strip().lower()
@@ -138,9 +145,42 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
 
 if __name__ == "__main__":
     model, tokenizer = load_model()
+    
+    test_sets = {
+        "BoolQ": settings.BOOLQ_DATA_PATH,
+        # "PIQA": settings.PIQA_DATA_PATH,
+        # "SIQA": settings.SIQA_DATA_PATH,
+        # "HellaSwag": settings.HELLAS_DATA_PATH,
+        # "WinoGrande": settings.WINOG_DATA_PATH,
+        # "ARC-e": settings.ARCE_DATA_PATH,
+        # "ARC-c": settings.ARCC_DATA_PATH,
+        # "OBQA": settings.OBQA_DATA_PATH,
+    }
+    
+    results = {}
 
-    print("Processing Data...")
-    with open(settings.BOOLQ_DATA_PATH, 'r', encoding='utf-8') as f:
-        samples = json.load(f)
+    print(f"\n{'='*20}\nSTARTING EVALUATION PIPELINE\n{'='*20}")
+    
+    for dataset_name, data_path in test_sets.items():
+        try:
+            with open(data_path, 'r', encoding='utf-8') as f:
+                samples = json.load(f)
+                
+            print(f"Evaluating {dataset_name}......")
+            
+            acc = evaluate_batch(model, tokenizer, samples, settings.BATCH_SIZE * settings.GRAD_ACCUM_STEPS)
+            results[dataset_name] = acc
+            
+        except FileNotFoundError:
+            print(f"[ERROR] File not found: {data_path}. Skipping {dataset_name}...\n")
 
-    final_accuracy = evaluate_batch(model, tokenizer, samples, settings.BATCH_SIZE * settings.GRAD_ACCUM_STEPS)
+    print("\n" + "="*30)
+    print(f"{'Dataset':<15} | {'Acc (%)'}")
+    print("-" * 30)
+    for name, acc in results.items():
+        print(f"{name:<15} | {acc:.2f}")
+    
+    if results:
+        avg_acc = sum(results.values()) / len(results)
+        print("-" * 30)
+        print(f"{'Avg.':<15} | {avg_acc:.2f}")
