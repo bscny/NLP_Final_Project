@@ -27,7 +27,7 @@ def build_prompt(instruction: str, inp: str = "") -> str:
 # Load model + adapters
 def load_model():
     print("Loading tokenizer...")
-    tokenizer = AutoTokenizer.from_pretrained(settings.MODEL_ID)
+    tokenizer = AutoTokenizer.from_pretrained(settings.MODEL_ID, clean_up_tokenization_spaces=False)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"  # for inference mode
 
@@ -148,13 +148,13 @@ if __name__ == "__main__":
     
     test_sets = {
         "BoolQ": settings.BOOLQ_DATA_PATH,
-        # "PIQA": settings.PIQA_DATA_PATH,
-        # "SIQA": settings.SIQA_DATA_PATH,
-        # "HellaSwag": settings.HELLAS_DATA_PATH,
-        # "WinoGrande": settings.WINOG_DATA_PATH,
-        # "ARC-e": settings.ARCE_DATA_PATH,
-        # "ARC-c": settings.ARCC_DATA_PATH,
-        # "OBQA": settings.OBQA_DATA_PATH,
+        "PIQA": settings.PIQA_DATA_PATH,
+        "SIQA": settings.SIQA_DATA_PATH,
+        "HellaSwag": settings.HELLAS_DATA_PATH,
+        "WinoGrande": settings.WINOG_DATA_PATH,
+        "ARC-e": settings.ARCE_DATA_PATH,
+        "ARC-c": settings.ARCC_DATA_PATH,
+        "OBQA": settings.OBQA_DATA_PATH,
     }
     
     results = {}
