@@ -14,13 +14,16 @@ ARCE_DATA_PATH = "./data/ARC-Easy/test.json"
 ARCC_DATA_PATH = "./data/ARC-Challenge/test.json"
 OBQA_DATA_PATH = "./data/openbookqa/test.json"
 
-OUTPUT_DIR = "./denselora_weights"
-ADAPTER_PATH  = "./denselora_weights/checkpoint-21304/denselora_adapters.pt"
+DENSE_LORA_OUTPUT_DIR = "./denselora_weights"
+LORA_OUTPUT_DIR = "./lora_weights"
+
+DENSE_LORA_ADAPTER_PATH  = "./denselora_weights/checkpoint-21304/denselora_adapters.pt"
+LORA_ADAPTER_PATH  = "./lora_weights/checkpoint-21304/lora_adapters.pt"
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 D_TYPE = torch.bfloat16
 
-WANDB_RUN_NAME = "run-rtx5090-2"
+WANDB_RUN_NAME = "run-rtx5090-lora-1"
 
 # Training Settings ------------------------------------------------------------
 EPOCHS = 2
@@ -33,7 +36,7 @@ RANK = 32
 ALPHA = 32
 DROPOUT = 0.05
 WARMUP_STEPS = 100
-LOGGING_STEPS = 500
+LOGGING_STEPS = 50
 
 # Inference Settings -----------------------------------------------------------
 MAX_NEW_TOKENS = 128

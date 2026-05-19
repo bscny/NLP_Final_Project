@@ -42,8 +42,8 @@ def load_model():
     print("Re-injecting DenseLoRA structure...")
     model = inject_dense_lora(model, settings.RANK, settings.ALPHA, settings.DROPOUT)
 
-    print(f"Loading adapter weights from {settings.ADAPTER_PATH}...")
-    adapter_weights = torch.load(settings.ADAPTER_PATH, map_location=settings.DEVICE, weights_only=True)
+    print(f"Loading adapter weights from {settings.DENSE_LORA_ADAPTER_PATH}...")
+    adapter_weights = torch.load(settings.DENSE_LORA_ADAPTER_PATH, map_location=settings.DEVICE, weights_only=True)
 
     # strict=False lets PyTorch ignore frozen base-model keys that aren't in the checkpoint
     missing, unexpected = model.load_state_dict(adapter_weights, strict=False)

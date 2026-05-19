@@ -1,30 +1,16 @@
 import os
 import json
 import torch
-import wandb
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, DataCollatorForSeq2Seq
 from datasets import Dataset
+import wandb
+# Import PEFT utilities
+from peft import LoraConfig, get_peft_model, TaskType
 
 # Custom Modules
-from src.denselora import inject_dense_lora, get_trainable_params
 import settings
 
-# Custom Trainer to ONLY save the denseLoRa weights
-class DenseLoRATrainer(Trainer):
-    # Reference here: https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.save_model
-    def save_model(self, output_dir: str | None = None, _internal_call: bool = False):
-        """Override save_model to ONLY save DenseLoRA trainable weights."""
-        if output_dir is None:
-            output_dir = self.args.output_dir
-        os.makedirs(output_dir, exist_ok=True)
-        
-        # Filter for only parameters that require gradients
-        trainable_names = {n for n, p in self.model.named_parameters() if p.requires_grad}
-        lora_weights = {k: v for k, v in self.model.state_dict().items() if k in trainable_names}
-        torch.save(lora_weights, os.path.join(output_dir, "denselora_adapters.pt"))
-        print(f"\nDenseLoRA weights safely saved to {output_dir}")
-
-# Data Loading & Masking
+# Data Loading & Masking (Kept exactly identical to your DenseLoRA script)
 def format_and_tokenize(sample, tokenizer):
     instruction = sample["instruction"].strip()
     inp = sample.get("input", "").strip()
@@ -48,7 +34,7 @@ def format_and_tokenize(sample, tokenizer):
     prompt_len = len(tokenizer(prompt, truncation=True, max_length=settings.MAX_SEQ_LENGTH, padding=False)["input_ids"])
 
     labels = full_enc["input_ids"].copy()
-    labels[:prompt_len] = [-100] * prompt_len # Mask prompt
+    labels[:prompt_len] = [-100] * prompt_len  # Mask prompt
 
     return {
         "input_ids": full_enc["input_ids"],
@@ -59,13 +45,13 @@ def format_and_tokenize(sample, tokenizer):
 # Main Training Loop
 def main():
     # Soft Creation if Needed
-    os.makedirs(settings.OUTPUT_DIR, exist_ok=True)
+    os.makedirs(settings.LORA_OUTPUT_DIR, exist_ok=True)
     
     # Initialize WandB
     print("Initializing Weights & Biases...")
     wandb.init(
-        project="DenseLoRA-Training", # Name of the project in the WandB dashboard
-        name=settings.WANDB_RUN_NAME, # The run name
+        project="LoRA-Training", 
+        name=settings.WANDB_RUN_NAME, 
         config={
             "learning_rate": settings.LR,
             "architecture": settings.MODEL_ID,
@@ -76,17 +62,32 @@ def main():
         }
     )
 
-    print("Loading Model & Tokenizer...")
+    print("Loading Base Model & Tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(settings.MODEL_ID)
     tokenizer.pad_token = tokenizer.eos_token
 
-    model = AutoModelForCausalLM.from_pretrained(settings.MODEL_ID, torch_dtype=settings.D_TYPE, device_map=settings.DEVICE)
+    model = AutoModelForCausalLM.from_pretrained(
+        settings.MODEL_ID, 
+        torch_dtype=settings.D_TYPE, 
+        device_map=settings.DEVICE
+    )
     model.config.use_cache = False  # Save vRam for training
 
-    print("Injecting DenseLoRA...")
-    model = inject_dense_lora(model, settings.RANK, settings.ALPHA, settings.DROPOUT)
+    print("Injecting Standard LoRA via PEFT...")
+    # Define the standard LoRA configuration matching your original targets
+    peft_config = LoraConfig(
+        task_type=TaskType.CAUSAL_LM,
+        r=settings.RANK,
+        lora_alpha=settings.ALPHA,
+        lora_dropout=settings.DROPOUT,
+        target_modules=["q_proj", "k_proj", "v_proj", "up_proj", "down_proj"]
+    )
     
-    get_trainable_params(model)
+    # Wrap the model. PEFT automatically handles freezing base weights.
+    model = get_peft_model(model, peft_config)
+    
+    # PEFT comes with a built-in helper to inspect trainable parameters
+    model.print_trainable_parameters()
 
     print("Processing Data...")
     with open(settings.TRAINING_DATA_PATH, 'r', encoding='utf-8') as f:
@@ -103,7 +104,7 @@ def main():
     
     print("Configuring Trainer...")
     training_args = TrainingArguments(
-        output_dir=settings.OUTPUT_DIR,
+        output_dir=settings.LORA_OUTPUT_DIR,
         per_device_train_batch_size=settings.BATCH_SIZE,
         gradient_accumulation_steps=settings.GRAD_ACCUM_STEPS,
         learning_rate=settings.LR,
@@ -111,14 +112,16 @@ def main():
         warmup_steps=settings.WARMUP_STEPS,
         num_train_epochs=settings.EPOCHS,
         logging_steps=settings.LOGGING_STEPS,
-        save_strategy="epoch",      # Saves at the end of each epoch using custom logic
-        bf16=True,                  # Faster training on RTX 5090
+        save_strategy="epoch",      
+        bf16=True,                  # Utilizing that RTX 5090 horsepower
         optim="adamw_torch",
         report_to="wandb",
-        gradient_checkpointing=True # Keeps VRAM low
+        gradient_checkpointing=True 
     )
 
-    trainer = DenseLoRATrainer(
+    # Standard HF Trainer handles PEFT perfectly out of the box.
+    # When saving, it only writes adapter weights (safetensors) and config.json
+    trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_set,
@@ -128,9 +131,11 @@ def main():
     print("Starting Training...")
     trainer.train()
     
-    # Finish the WandB run cleanly
-    wandb.finish()
+    # Save the final adapter weights explicitly at the end
+    trainer.save_model(settings.LORA_OUTPUT_DIR)
+    print(f"\nStandard LoRA weights safely saved to {settings.LORA_OUTPUT_DIR}")
     
+    wandb.finish()
     print("Done!")
 
 if __name__ == "__main__":
