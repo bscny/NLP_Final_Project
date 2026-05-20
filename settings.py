@@ -18,7 +18,10 @@ DENSE_LORA_OUTPUT_DIR = "./denselora_weights"
 LORA_OUTPUT_DIR = "./lora_weights"
 
 DENSE_LORA_ADAPTER_PATH  = "./denselora_weights/checkpoint-21304/denselora_adapters.pt"
-LORA_ADAPTER_PATH  = "./lora_weights/checkpoint-21304/lora_adapters.pt"
+LORA_ADAPTER_PATH  = "./lora_weights/checkpoint-21304"  # Since PEFT expects the folder path with weights and config
+
+DENSE_LORA_RESULT_PATH = "./result/denselora/result_v2.txt"
+LORA_RESULT_PATH = "./result/lora/result_v1.txt"
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 D_TYPE = torch.bfloat16

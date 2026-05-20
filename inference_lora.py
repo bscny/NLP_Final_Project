@@ -3,9 +3,8 @@ import json
 import re
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
-
-# Custom Modules
-from src.denselora import inject_dense_lora
+# Import PEFT for clean adapter loading
+from peft import PeftModel
 import settings
 
 # Build the Alpaca-style prompt (mirrors format_and_tokenize from training)
@@ -39,21 +38,15 @@ def load_model():
     )
     model.config.use_cache = True  # Re-enable for inference
 
-    print("Re-injecting DenseLoRA structure...")
-    model = inject_dense_lora(model, settings.RANK, settings.ALPHA, settings.DROPOUT)
-
-    print(f"Loading adapter weights from {settings.DENSE_LORA_ADAPTER_PATH}...")
-    adapter_weights = torch.load(settings.DENSE_LORA_ADAPTER_PATH, map_location=settings.DEVICE, weights_only=True)
-
-    # strict=False lets PyTorch ignore frozen base-model keys that aren't in the checkpoint
-    missing, unexpected = model.load_state_dict(adapter_weights, strict=False)
-
-    # Sanity-check: only base-model (frozen) keys should be missing
-    if missing:
-        print(f"  [info] {len(missing)} keys not in checkpoint (expected — these are frozen base weights)")
-    if unexpected:
-        # This would mean the checkpoint has keys that don't exist in the model
-        print(f"  [WARNING] {len(unexpected)} unexpected keys: {unexpected}")
+    # PEFT natively handles injecting structure and loading adapter weights simultaneously.
+    # Note: Pass the DIRECTORY containing 'adapter_model.safetensors' and 'adapter_config.json'
+    print(f"Loading standard LoRA adapters from {settings.LORA_ADAPTER_PATH}...")
+    model = PeftModel.from_pretrained(
+        model, 
+        settings.LORA_ADAPTER_PATH,
+        torch_dtype=settings.D_TYPE,
+        device_map=settings.DEVICE
+    )
 
     model.eval()
     print("Model ready.\n")
@@ -101,8 +94,7 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
                 top_k=settings.TOP_K,
                 num_beams=settings.NUM_BEAMS,
                 pad_token_id=tokenizer.eos_token_id,
-                
-                max_length=None,   # ADD THIS LINE to silence the max_new_tokens warning
+                max_length=None,   # Silences the max_new_tokens warning
             )
 
         # Decode only the newly generated tokens (strip the prompt)
