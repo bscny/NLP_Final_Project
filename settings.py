@@ -14,10 +14,10 @@ ARCE_DATA_PATH = "./data/ARC-Easy/test.json"
 ARCC_DATA_PATH = "./data/ARC-Challenge/test.json"
 OBQA_DATA_PATH = "./data/openbookqa/test.json"
 
-DENSE_LORA_OUTPUT_DIR = "./denselora_weights"
+DENSE_LORA_OUTPUT_DIR = "./denselora_weights/ver2"
 LORA_OUTPUT_DIR = "./lora_weights"
 
-DENSE_LORA_ADAPTER_PATH  = "./denselora_weights/checkpoint-21304/denselora_adapters.pt"
+DENSE_LORA_ADAPTER_PATH  = "./denselora_weights/ver1/checkpoint-21304/denselora_adapters.pt"
 LORA_ADAPTER_PATH  = "./lora_weights/checkpoint-21304"  # Since PEFT expects the folder path with weights and config
 
 DENSE_LORA_RESULT_PATH = "./result/denselora/result_v2.txt"
@@ -26,7 +26,7 @@ LORA_RESULT_PATH = "./result/lora/result_v1.txt"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 D_TYPE = torch.bfloat16
 
-WANDB_RUN_NAME = "run-rtx5090-lora-1"
+WANDB_RUN_NAME = "run-rtx5090-denselora-2"
 
 # Training Settings ------------------------------------------------------------
 EPOCHS = 2
