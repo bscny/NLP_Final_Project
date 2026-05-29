@@ -1,7 +1,7 @@
 import torch
 
 # General ----------------------------------------------------------------------
-MODEL_ID = "meta-llama/Meta-Llama-3-8B"
+# MODEL_ID = "meta-llama/Meta-Llama-3-8B"
 MODEL_ID = "google/gemma-4-E4B-it"
 
 TRAINING_DATA_PATH = "./data/commonsense_170k.json"
@@ -31,8 +31,8 @@ WANDB_RUN_NAME = "run-gemma-denselora-1"
 
 # Training Settings ------------------------------------------------------------
 EPOCHS = 2
-BATCH_SIZE = 8
-GRAD_ACCUM_STEPS = 2
+BATCH_SIZE = 4
+GRAD_ACCUM_STEPS = 4
 LR = 3e-4
 MAX_SEQ_LENGTH = 512
 
