@@ -1,6 +1,5 @@
 import os
 import json
-import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, DataCollatorForSeq2Seq
 from datasets import Dataset
 import wandb
@@ -9,38 +8,7 @@ from peft import LoraConfig, get_peft_model, TaskType
 
 # Custom Modules
 import settings
-
-# Data Loading & Masking (Kept exactly identical to your DenseLoRA script)
-def format_and_tokenize(sample, tokenizer):
-    instruction = sample["instruction"].strip()
-    inp = sample.get("input", "").strip()
-    output = sample["output"].strip()
-
-    # Construct Alpaca-style prompt
-    prompt = (
-        f"Below is an instruction that describes a task"
-        f"{' paired with an input' if inp else ''}. "
-        f"Write a response that appropriately completes the request.\n\n"
-        f"### Instruction:\n{instruction}\n\n"
-    )
-    if inp:
-        prompt += f"### Input:\n{inp}\n\n"
-    prompt += "### Response:\n"
-
-    full_text = prompt + output + tokenizer.eos_token
-    
-    # Tokenize full text and prompt (No padding, we will do that in Collator)
-    full_enc = tokenizer(full_text, truncation=True, max_length=settings.MAX_SEQ_LENGTH, padding=False)
-    prompt_len = len(tokenizer(prompt, truncation=True, max_length=settings.MAX_SEQ_LENGTH, padding=False)["input_ids"])
-
-    labels = full_enc["input_ids"].copy()
-    labels[:prompt_len] = [-100] * prompt_len  # Mask prompt
-
-    return {
-        "input_ids": full_enc["input_ids"],
-        "attention_mask": full_enc["attention_mask"],
-        "labels": labels
-    }
+from src.utils import format_and_tokenize
 
 # Main Training Loop
 def main():
@@ -64,7 +32,9 @@ def main():
 
     print("Loading Base Model & Tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(settings.MODEL_ID)
-    tokenizer.pad_token = tokenizer.eos_token
+    if tokenizer.pad_token is None:
+        # Safely fallback to eos_token only if the model lacks a native pad_token
+        tokenizer.pad_token = tokenizer.eos_token
 
     model = AutoModelForCausalLM.from_pretrained(
         settings.MODEL_ID, 
