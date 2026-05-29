@@ -173,7 +173,7 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
 
 if __name__ == "__main__":
     # Initialize the DualLogger to pipe output to both screen and file
-    sys.stdout = DualLogger(settings.LORA_RESULT_PATH)
+    sys.stdout = DualLogger(settings.DENSE_LORA_RESULT_PATH)
     
     # tqdm writes to stderr by default, so we point stderr to our logger as well 
     # to capture the progress bars in the text file seamlessly.
