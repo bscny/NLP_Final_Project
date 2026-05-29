@@ -1,3 +1,4 @@
+import sys
 import torch
 import json
 import re
@@ -7,27 +8,54 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 import settings
 
-# Build the Alpaca-style prompt (mirrors format_and_tokenize from training)
-def build_prompt(instruction: str, inp: str = "") -> str:
+# Custom Logger to write to both Terminal and File
+class DualLogger:
+    def __init__(self, filepath):
+        self.terminal = sys.stdout
+        self.log = open(filepath, "w", encoding="utf-8")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+        self.flush()
+
+    def flush(self):
+        self.terminal.flush()
+        self.log.flush()
+
+# Build the prompt (mirrors format_and_tokenize from training)
+def build_prompt(instruction: str, inp: str = "", tokenizer = None) -> str:
     instruction = instruction.strip()
     inp = inp.strip()
 
-    prompt = (
-        f"Below is an instruction that describes a task"
-        f"{' paired with an input' if inp else ''}. "
-        f"Write a response that appropriately completes the request.\n\n"
-        f"### Instruction:\n{instruction}\n\n"
-    )
-    if inp:
-        prompt += f"### Input:\n{inp}\n\n"
-    prompt += "### Response:\n"
-    return prompt
+    # Mirror your training script's exact formatting logic
+    if getattr(tokenizer, "chat_template", None):
+        user_text = f"{instruction}\n\n{inp}".strip() if inp else instruction
+        
+        return tokenizer.apply_chat_template([
+            {"role": "user", "content": user_text}
+        ], tokenize=False, add_generation_prompt=True)
+    else:
+        # Fallback to Alpaca-style
+        prompt = (
+            f"Below is an instruction that describes a task"
+            f"{' paired with an input' if inp else ''}. "
+            f"Write a response that appropriately completes the request.\n\n"
+            f"### Instruction:\n{instruction}\n\n"
+        )
+        if inp:
+            prompt += f"### Input:\n{inp}\n\n"
+        prompt += "### Response:\n"
+        return prompt
 
 # Load model + adapters
 def load_model():
     print("Loading tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(settings.MODEL_ID, clean_up_tokenization_spaces=False)
-    tokenizer.pad_token = tokenizer.eos_token
+    if tokenizer.pad_token is None:
+        # Safely fallback to eos_token only if the model lacks a native pad_token
+        tokenizer.pad_token = tokenizer.eos_token
+
     tokenizer.padding_side = "left"  # for inference mode
 
     print("Loading base model...")
@@ -71,7 +99,7 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
         
         # Build prompts for the entire batch
         prompts = [
-            build_prompt(sample["instruction"], sample.get("input", "")) 
+            build_prompt(sample["instruction"], sample.get("input", ""), tokenizer) 
             for sample in batch_samples
         ]
 
@@ -93,7 +121,7 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
                 top_p=settings.TOP_P,
                 top_k=settings.TOP_K,
                 num_beams=settings.NUM_BEAMS,
-                pad_token_id=tokenizer.eos_token_id,
+                pad_token_id=tokenizer.pad_token_id,
                 max_length=None,   # Silences the max_new_tokens warning
             )
 
@@ -131,11 +159,18 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
     print(f"Total evaluated : {total}")
     print(f"Correct         : {correct}")
     print(f"Unparsed        : {unparsed}")
-    print(f"Accuracy        : {accuracy:.2f}%")
+    print(f"Accuracy        : {accuracy:.2f}%\n")
     
     return accuracy
 
 if __name__ == "__main__":
+    # Initialize the DualLogger to pipe output to both screen and file
+    sys.stdout = DualLogger(settings.LORA_RESULT_PATH)
+    
+    # tqdm writes to stderr by default, so we point stderr to our logger as well 
+    # to capture the progress bars in the text file seamlessly.
+    sys.stderr = sys.stdout
+    
     model, tokenizer = load_model()
     
     test_sets = {
