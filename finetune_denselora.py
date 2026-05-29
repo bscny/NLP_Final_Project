@@ -30,18 +30,31 @@ def format_and_tokenize(sample, tokenizer):
     inp = sample.get("input", "").strip()
     output = sample["output"].strip()
 
-    # Construct Alpaca-style prompt
-    prompt = (
-        f"Below is an instruction that describes a task"
-        f"{' paired with an input' if inp else ''}. "
-        f"Write a response that appropriately completes the request.\n\n"
-        f"### Instruction:\n{instruction}\n\n"
-    )
-    if inp:
-        prompt += f"### Input:\n{inp}\n\n"
-    prompt += "### Response:\n"
+    # (Dynamically routes to native chat templates for Gemma/Llama-Instruct if available)
+    if getattr(tokenizer, "chat_template", None):
+        user_text = f"{instruction}\n\n{inp}".strip() if inp else instruction
+        
+        full_text = tokenizer.apply_chat_template([
+            {"role": "user", "content": user_text},
+            {"role": "assistant", "content": output}
+        ], tokenize=False)
+        
+        prompt = tokenizer.apply_chat_template([
+            {"role": "user", "content": user_text}
+        ], tokenize=False, add_generation_prompt=True)
+    else:
+        # Construct Alpaca-style prompt
+        prompt = (
+            f"Below is an instruction that describes a task"
+            f"{' paired with an input' if inp else ''}. "
+            f"Write a response that appropriately completes the request.\n\n"
+            f"### Instruction:\n{instruction}\n\n"
+        )
+        if inp:
+            prompt += f"### Input:\n{inp}\n\n"
+        prompt += "### Response:\n"
 
-    full_text = prompt + output + tokenizer.eos_token
+        full_text = prompt + output + tokenizer.eos_token
     
     # Tokenize full text and prompt (No padding, we will do that in Collator)
     full_enc = tokenizer(full_text, truncation=True, max_length=settings.MAX_SEQ_LENGTH, padding=False)
@@ -78,7 +91,9 @@ def main():
 
     print("Loading Model & Tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(settings.MODEL_ID)
-    tokenizer.pad_token = tokenizer.eos_token
+    if tokenizer.pad_token is None:
+        # Safely fallback to eos_token only if the model lacks a native pad_token
+        tokenizer.pad_token = tokenizer.eos_token
 
     model = AutoModelForCausalLM.from_pretrained(settings.MODEL_ID, torch_dtype=settings.D_TYPE, device_map=settings.DEVICE)
     model.config.use_cache = False  # Save vRam for training

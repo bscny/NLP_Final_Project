@@ -76,10 +76,6 @@ def inject_dense_lora(model, rank: int, alpha: int, dropout: float = 0.05, targe
     # Freeze all base params before injecting
     for p in model.parameters():
         p.requires_grad = False
-        
-    # Capture base model's device & dtype BEFORE touching anything
-    model_device = next(model.parameters()).device
-    model_dtype  = next(model.parameters()).dtype
 
     # Collect (name, module, parent, attr) for all target layers
     targets = []
@@ -98,33 +94,35 @@ def inject_dense_lora(model, rank: int, alpha: int, dropout: float = 0.05, targe
     shared_map = {}
     model._dense_lora_shared = nn.ModuleList()
     
-    # Iterate and build/register simultaneously
-    for name, module in targets:
-        key = (module.in_features, module.out_features)
-        
-        if key not in shared_map:
-            # Create the shared modules
-            enc = DenseLoRAEncoder(module.in_features, rank).to(device=model_device, dtype=model_dtype)
-            dec = DenseLoRADecoder(rank, module.out_features).to(device=model_device, dtype=model_dtype)
-            shared_map[key] = (enc, dec)
-            
-            # Register them to PyTorch immediately so gradients are tracked
-            model._dense_lora_shared.append(enc)
-            model._dense_lora_shared.append(dec)
-
-    # Replace target layers
     def get_parent_and_attr(model, name):
         parts = name.split(".")
         parent = model
         for part in parts[:-1]:
             parent = getattr(parent, part)
         return parent, parts[-1]
-
+    
+    # Iterate and build/register simultaneously
     for name, module in targets:
         key = (module.in_features, module.out_features)
+        
+        # Capture base model's device & dtype BEFORE touching anything
+        layer_device = module.weight.device
+        layer_dtype = module.weight.dtype
+        
+        if key not in shared_map:
+            # Create the shared modules
+            enc = DenseLoRAEncoder(module.in_features, rank).to(device=layer_device, dtype=layer_dtype)
+            dec = DenseLoRADecoder(rank, module.out_features).to(device=layer_device, dtype=layer_dtype)
+            shared_map[key] = (enc, dec)
+            
+            # Register them to PyTorch immediately so gradients are tracked
+            model._dense_lora_shared.append(enc)
+            model._dense_lora_shared.append(dec)
+
+        # Replace target layers
         enc, dec = shared_map[key]
         parent, attr = get_parent_and_attr(model, name)
-        dense_lora_layer = DenseLoRALinear(module, enc, dec, rank, alpha, dropout).to(device=model_device, dtype=model_dtype)
+        dense_lora_layer = DenseLoRALinear(module, enc, dec, rank, alpha, dropout).to(device=layer_device, dtype=layer_dtype)
         setattr(parent, attr, dense_lora_layer)
 
     return model
@@ -138,7 +136,8 @@ def get_trainable_params(model):
     return trainable
 
 if __name__ == "__main__":
-    model_id = "meta-llama/Meta-Llama-3-8B"
+    # model_id = "meta-llama/Meta-Llama-3-8B"
+    model_id = "google/gemma-4-E4B-it"
 
     # Load the original model
     model = AutoModelForCausalLM.from_pretrained(
