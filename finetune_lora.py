@@ -8,51 +8,7 @@ from peft import LoraConfig, get_peft_model, TaskType
 
 # Custom Modules
 import settings
-
-# Data Loading & Masking (Exactly identical to DenseLoRA script)
-def format_and_tokenize(sample, tokenizer):
-    instruction = sample["instruction"].strip()
-    inp = sample.get("input", "").strip()
-    output = sample["output"].strip()
-
-    # (Dynamically routes to native chat templates for Gemma/Llama-Instruct if available)
-    if getattr(tokenizer, "chat_template", None):
-        user_text = f"{instruction}\n\n{inp}".strip() if inp else instruction
-        
-        full_text = tokenizer.apply_chat_template([
-            {"role": "user", "content": user_text},
-            {"role": "assistant", "content": output}
-        ], tokenize=False)
-        
-        prompt = tokenizer.apply_chat_template([
-            {"role": "user", "content": user_text}
-        ], tokenize=False, add_generation_prompt=True)
-    else:
-        # Construct Alpaca-style prompt
-        prompt = (
-            f"Below is an instruction that describes a task"
-            f"{' paired with an input' if inp else ''}. "
-            f"Write a response that appropriately completes the request.\n\n"
-            f"### Instruction:\n{instruction}\n\n"
-        )
-        if inp:
-            prompt += f"### Input:\n{inp}\n\n"
-        prompt += "### Response:\n"
-
-        full_text = prompt + output + tokenizer.eos_token
-    
-    # Tokenize full text and prompt (No padding, we will do that in Collator)
-    full_enc = tokenizer(full_text, truncation=True, max_length=settings.MAX_SEQ_LENGTH, padding=False)
-    prompt_len = len(tokenizer(prompt, truncation=True, max_length=settings.MAX_SEQ_LENGTH, padding=False)["input_ids"])
-
-    labels = full_enc["input_ids"].copy()
-    labels[:prompt_len] = [-100] * prompt_len  # Mask prompt
-
-    return {
-        "input_ids": full_enc["input_ids"],
-        "attention_mask": full_enc["attention_mask"],
-        "labels": labels
-    }
+from src.utils import format_and_tokenize
 
 # Main Training Loop
 def main():
