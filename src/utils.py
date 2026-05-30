@@ -166,6 +166,12 @@ def evaluate_batch(model, tokenizer, data: list, batch_size: int = 16) -> float:
             truncation=True,
             max_length=settings.MAX_SEQ_LENGTH,
         ).to(settings.DEVICE)
+        
+        # Inject dummy token IDs to satisfy Gemma 4's multimodal forward pass
+        if "gemma" in settings.MODEL_ID.lower():
+            batch_shape = inputs["input_ids"].shape
+            inputs["token_type_ids"] = torch.zeros(batch_shape, dtype=torch.long, device=settings.DEVICE)
+            inputs["mm_token_type_ids"] = torch.zeros(batch_shape, dtype=torch.long, device=settings.DEVICE)
 
         # Generate outputs
         with torch.inference_mode():
