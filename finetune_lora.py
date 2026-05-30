@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, DataCollatorForSeq2Seq
 from datasets import Dataset
 import wandb
@@ -50,7 +51,9 @@ def main():
         r=settings.RANK,
         lora_alpha=settings.ALPHA,
         lora_dropout=settings.DROPOUT,
-        target_modules=["q_proj", "k_proj", "v_proj", "up_proj", "down_proj"]
+        # target_modules=["q_proj", "k_proj", "v_proj", "up_proj", "down_proj"]
+        # Replace the list with this exact Regex string:
+        target_modules=r".*\.layers\.\d+\.(self_attn|mlp)\.(q_proj|k_proj|v_proj|up_proj|down_proj)$"
     )
     
     # Wrap the model. PEFT automatically handles freezing base weights.

@@ -46,11 +46,19 @@ def format_and_tokenize(sample, tokenizer):
     labels = full_enc["input_ids"].copy()
     labels[:prompt_len] = [-100] * prompt_len # Mask prompt
 
-    return {
+    result = {
         "input_ids": full_enc["input_ids"],
         "attention_mask": full_enc["attention_mask"],
         "labels": labels
     }
+    
+    # Architecturally spoof multimodal IDs *only* if it's a Gemma model
+    if "gemma" in settings.MODEL_ID.lower():
+        seq_len = len(full_enc["input_ids"])
+        result["token_type_ids"] = [0] * seq_len
+        result["mm_token_type_ids"] = [0] * seq_len
+
+    return result
     
 # ============================================================================================================================
 # For Inference

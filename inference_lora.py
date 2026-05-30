@@ -1,8 +1,5 @@
 import sys
-import torch
 import json
-import re
-from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 # Import PEFT for clean adapter loading
 from peft import PeftModel
