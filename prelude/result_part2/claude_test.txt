@@ -1,0 +1,65 @@
+========================================
+claude-haiku-4-5-20251001 Evaluation Results
+========================================
+Dataset:         BoolQ
+Total evaluated: 60
+Correct:         41
+Unparsed:        2 (Model didn't match regex patterns)
+Accuracy:        68.33%
+----------------------------------------
+Dataset:         PIQA
+Total evaluated: 60
+Correct:         56
+Unparsed:        2 (Model didn't match regex patterns)
+Accuracy:        93.33%
+----------------------------------------
+Dataset:         SIQA
+Total evaluated: 60
+Correct:         43
+Unparsed:        2 (Model didn't match regex patterns)
+Accuracy:        71.67%
+----------------------------------------
+Dataset:         HellaSwag
+Total evaluated: 60
+Correct:         46
+Unparsed:        9 (Model didn't match regex patterns)
+Accuracy:        76.67%
+----------------------------------------
+Dataset:         WinoGrande
+Total evaluated: 60
+Correct:         43
+Unparsed:        9 (Model didn't match regex patterns)
+Accuracy:        71.67%
+----------------------------------------
+Dataset:         ARC-e
+Total evaluated: 60
+Correct:         44
+Unparsed:        16 (Model didn't match regex patterns)
+Accuracy:        73.33%
+----------------------------------------
+Dataset:         ARC-c
+Total evaluated: 60
+Correct:         31
+Unparsed:        28 (Model didn't match regex patterns)
+Accuracy:        51.67%
+----------------------------------------
+Dataset:         OBQA
+Total evaluated: 60
+Correct:         48
+Unparsed:        10 (Model didn't match regex patterns)
+Accuracy:        80.00%
+----------------------------------------
+
+==============================
+Dataset         | Acc (%)
+------------------------------
+BoolQ           | 68.33
+PIQA            | 93.33
+SIQA            | 71.67
+HellaSwag       | 76.67
+WinoGrande      | 71.67
+ARC-e           | 73.33
+ARC-c           | 51.67
+OBQA            | 80.00
+------------------------------
+Avg.            | 73.33

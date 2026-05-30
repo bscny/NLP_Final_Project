@@ -33,8 +33,8 @@ def main():
     # Initialize WandB
     print("Initializing Weights & Biases...")
     wandb.init(
-        project="LoRA-Training", 
-        name=settings.WANDB_RUN_NAME, 
+        project="DenseLoRA-Training",
+        name=settings.WANDB_RUN_NAME,
         config={
             "learning_rate": settings.LR,
             "architecture": settings.MODEL_ID,

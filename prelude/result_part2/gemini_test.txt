@@ -1,0 +1,65 @@
+========================================
+gemini-3.1-flash-lite-preview Evaluation Results
+========================================
+Dataset:         BoolQ
+Total evaluated: 60
+Correct:         49
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        81.67%
+----------------------------------------
+Dataset:         PIQA
+Total evaluated: 60
+Correct:         56
+Unparsed:        3 (Model didn't match regex patterns)
+Accuracy:        93.33%
+----------------------------------------
+Dataset:         SIQA
+Total evaluated: 60
+Correct:         46
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        76.67%
+----------------------------------------
+Dataset:         HellaSwag
+Total evaluated: 60
+Correct:         51
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        85.00%
+----------------------------------------
+Dataset:         WinoGrande
+Total evaluated: 60
+Correct:         49
+Unparsed:        1 (Model didn't match regex patterns)
+Accuracy:        81.67%
+----------------------------------------
+Dataset:         ARC-e
+Total evaluated: 60
+Correct:         60
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        100.00%
+----------------------------------------
+Dataset:         ARC-c
+Total evaluated: 60
+Correct:         59
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        98.33%
+----------------------------------------
+Dataset:         OBQA
+Total evaluated: 60
+Correct:         57
+Unparsed:        2 (Model didn't match regex patterns)
+Accuracy:        95.00%
+----------------------------------------
+
+==============================
+Dataset         | Acc (%)
+------------------------------
+BoolQ           | 81.67
+PIQA            | 93.33
+SIQA            | 76.67
+HellaSwag       | 85.00
+WinoGrande      | 81.67
+ARC-e           | 100.00
+ARC-c           | 98.33
+OBQA            | 95.00
+------------------------------
+Avg.            | 88.96

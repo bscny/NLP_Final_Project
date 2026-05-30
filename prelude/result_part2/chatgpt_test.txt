@@ -1,0 +1,65 @@
+========================================
+gpt-5.4-nano Evaluation Results
+========================================
+Dataset:         BoolQ
+Total evaluated: 60
+Correct:         38
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        63.33%
+----------------------------------------
+Dataset:         PIQA
+Total evaluated: 60
+Correct:         49
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        81.67%
+----------------------------------------
+Dataset:         SIQA
+Total evaluated: 60
+Correct:         38
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        63.33%
+----------------------------------------
+Dataset:         HellaSwag
+Total evaluated: 60
+Correct:         40
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        66.67%
+----------------------------------------
+Dataset:         WinoGrande
+Total evaluated: 60
+Correct:         35
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        58.33%
+----------------------------------------
+Dataset:         ARC-e
+Total evaluated: 60
+Correct:         56
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        93.33%
+----------------------------------------
+Dataset:         ARC-c
+Total evaluated: 60
+Correct:         47
+Unparsed:        1 (Model didn't match regex patterns)
+Accuracy:        78.33%
+----------------------------------------
+Dataset:         OBQA
+Total evaluated: 60
+Correct:         44
+Unparsed:        0 (Model didn't match regex patterns)
+Accuracy:        73.33%
+----------------------------------------
+
+==============================
+Dataset         | Acc (%)
+------------------------------
+BoolQ           | 63.33
+PIQA            | 81.67
+SIQA            | 63.33
+HellaSwag       | 66.67
+WinoGrande      | 58.33
+ARC-e           | 93.33
+ARC-c           | 78.33
+OBQA            | 73.33
+------------------------------
+Avg.            | 72.29
