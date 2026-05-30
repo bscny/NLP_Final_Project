@@ -60,15 +60,47 @@ class DualLogger:
     def __init__(self, filepath):
         self.terminal = sys.stdout
         self.log = open(filepath, "w", encoding="utf-8")
+        self.file_buffer = ""
+        
+        # Regex to catch and strip ANSI escape sequences (colors, cursor moves)
+        self.ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
 
     def write(self, message):
+        # 1. Write the raw, animated message to the terminal normally
         self.terminal.write(message)
-        self.log.write(message)
-        self.flush()
+
+        # 2. Clean the message of ANSI control codes for the log file
+        clean_message = self.ansi_escape.sub('', message)
+
+        # 3. Buffer characters to simulate terminal line-overwriting
+        for char in clean_message:
+            if char == '\r':
+                # Carriage return: reset the buffer, wiping intermediate tqdm steps
+                self.file_buffer = ""
+            elif char == '\n':
+                # Newline: commit the finished line to the file and reset the buffer
+                self.log.write(self.file_buffer + '\n')
+                self.file_buffer = ""
+            else:
+                # Normal character: add to the buffer
+                self.file_buffer += char
 
     def flush(self):
+        # Flush streams. Note: We do NOT write file_buffer here because 
+        # tqdm flushes after every step. We only want to write on \n.
         self.terminal.flush()
         self.log.flush()
+
+    def isatty(self):
+        # Trick tqdm into acting like a terminal by inheriting stdout's status
+        return self.terminal.isatty()
+
+    def __del__(self):
+        # Ensure any leftover text in the buffer is written before closing
+        if hasattr(self, 'file_buffer') and self.file_buffer:
+            self.log.write(self.file_buffer + '\n')
+        if hasattr(self, 'log'):
+            self.log.close()
         
 # Build the prompt (mirrors format_and_tokenize from training)
 def build_prompt(instruction: str, inp: str = "", tokenizer = None) -> str:
