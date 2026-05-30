@@ -51,9 +51,14 @@ def main():
         r=settings.RANK,
         lora_alpha=settings.ALPHA,
         lora_dropout=settings.DROPOUT,
-        # target_modules=["q_proj", "k_proj", "v_proj", "up_proj", "down_proj"]
-        # Replace the list with this exact Regex string:
-        target_modules=r".*\.layers\.\d+\.(self_attn|mlp)\.(q_proj|k_proj|v_proj|up_proj|down_proj)$"
+        target_modules=(
+            # Strictly targets ONLY the standard nn.Linear projections inside the text tower
+            r".*language_model\.layers\.\d+\.(self_attn|mlp)\.(q_proj|k_proj|v_proj|up_proj|down_proj)$" 
+            # r"^model\.language_model\.layers\.\d+\.(self_attn|mlp)\.(q_proj|k_proj|v_proj|up_proj|down_proj)$"
+            if "gemma" in settings.MODEL_ID.lower() 
+            # Otherwise, fall back to this list
+            else ["q_proj", "k_proj", "v_proj", "up_proj", "down_proj"] 
+        )
     )
     
     # Wrap the model. PEFT automatically handles freezing base weights.
