@@ -27,7 +27,7 @@ LORA_RESULT_PATH = "./result/lora/gemma/result_v1.txt"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 D_TYPE = torch.bfloat16
 
-WANDB_RUN_NAME = "run-gemma-denselora-1"
+WANDB_RUN_NAME = "run-gemma-lora-1"
 
 # Training Settings ------------------------------------------------------------
 EPOCHS = 2
