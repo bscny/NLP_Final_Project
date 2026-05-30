@@ -53,10 +53,10 @@ def format_and_tokenize(sample, tokenizer):
     }
     
     # Architecturally spoof multimodal IDs *only* if it's a Gemma model
-    if "gemma" in settings.MODEL_ID.lower():
-        seq_len = len(full_enc["input_ids"])
-        result["token_type_ids"] = [0] * seq_len
-        result["mm_token_type_ids"] = [0] * seq_len
+    # if "gemma" in settings.MODEL_ID.lower():
+    #     seq_len = len(full_enc["input_ids"])
+    #     result["token_type_ids"] = [0] * seq_len
+    #     result["mm_token_type_ids"] = [0] * seq_len
 
     return result
     

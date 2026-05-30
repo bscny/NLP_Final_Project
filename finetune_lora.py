@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, DataCollatorForSeq2Seq
 from datasets import Dataset
 import wandb
@@ -10,6 +11,19 @@ from peft import LoraConfig, get_peft_model, TaskType
 # Custom Modules
 import settings
 from src.utils import format_and_tokenize
+
+class GemmaTextCollator(DataCollatorForSeq2Seq):
+    def __call__(self, features, return_tensors=None):
+        # 1. Let the standard collator correctly pad input_ids, attention_mask, and labels
+        batch = super().__call__(features, return_tensors)
+        
+        # 2. Inject the multimodal zeros AFTER padding, perfectly matching the final tensor shape
+        if "gemma" in settings.MODEL_ID.lower():
+            batch_shape = batch["input_ids"].shape
+            batch["token_type_ids"] = torch.zeros(batch_shape, dtype=torch.long)
+            batch["mm_token_type_ids"] = torch.zeros(batch_shape, dtype=torch.long)
+            
+        return batch
 
 # Main Training Loop
 def main():
@@ -78,7 +92,10 @@ def main():
         desc="Tokenizing & Masking"
     )
     
-    data_collator = DataCollatorForSeq2Seq(tokenizer, pad_to_multiple_of=8, return_tensors="pt")
+    if "gemma" in settings.MODEL_ID.lower():
+        data_collator = GemmaTextCollator(tokenizer, pad_to_multiple_of=8, return_tensors="pt")
+    else:
+        data_collator = DataCollatorForSeq2Seq(tokenizer, pad_to_multiple_of=8, return_tensors="pt")
     
     print("Configuring Trainer...")
     training_args = TrainingArguments(
