@@ -1,0 +1,96 @@
+Loading tokenizer...
+Loading base model...
+Loading weights: 100%|##########| 2076/2076 [00:01<00:00, 1568.83it/s]
+Loading standard LoRA adapters from ./lora_weights/gemma/ver1/checkpoint-21304...
+Model ready.
+
+
+====================
+STARTING EVALUATION PIPELINE
+====================
+Evaluating BoolQ......
+Evaluating Batches: 100%|##########| 205/205 [02:04<00:00,  1.64it/s]
+
+--- Evaluation Complete ---
+Total evaluated : 3270
+Correct         : 2329
+Unparsed        : 0
+Accuracy        : 71.22%
+
+Evaluating PIQA......
+Evaluating Batches: 100%|##########| 115/115 [03:31<00:00,  1.84s/it]
+
+--- Evaluation Complete ---
+Total evaluated : 1838
+Correct         : 1648
+Unparsed        : 0
+Accuracy        : 89.66%
+
+Evaluating SIQA......
+Evaluating Batches: 100%|##########| 123/123 [01:52<00:00,  1.09it/s]
+
+--- Evaluation Complete ---
+Total evaluated : 1954
+Correct         : 1596
+Unparsed        : 0
+Accuracy        : 81.68%
+
+Evaluating HellaSwag......
+Evaluating Batches: 100%|##########| 628/628 [26:55<00:00,  2.57s/it]
+
+--- Evaluation Complete ---
+Total evaluated : 10042
+Correct         : 9464
+Unparsed        : 0
+Accuracy        : 94.24%
+
+Evaluating WinoGrande......
+Evaluating Batches: 100%|##########| 80/80 [01:11<00:00,  1.11it/s]
+
+--- Evaluation Complete ---
+Total evaluated : 1267
+Correct         : 1108
+Unparsed        : 0
+Accuracy        : 87.45%
+
+Evaluating ARC-e......
+Evaluating Batches: 100%|##########| 149/149 [03:51<00:00,  1.55s/it]
+
+--- Evaluation Complete ---
+Total evaluated : 2376
+Correct         : 2248
+Unparsed        : 0
+Accuracy        : 94.61%
+
+Evaluating ARC-c......
+Evaluating Batches: 100%|##########| 74/74 [01:47<00:00,  1.45s/it]
+
+--- Evaluation Complete ---
+Total evaluated : 1172
+Correct         : 1006
+Unparsed        : 0
+Accuracy        : 85.84%
+
+Evaluating OBQA......
+Evaluating Batches: 100%|##########| 32/32 [00:34<00:00,  1.06s/it]
+
+--- Evaluation Complete ---
+Total evaluated : 500
+Correct         : 448
+Unparsed        : 0
+Accuracy        : 89.60%
+
+
+==============================
+Dataset         | Acc (%)
+------------------------------
+BoolQ           | 71.22
+PIQA            | 89.66
+SIQA            | 81.68
+HellaSwag       | 94.24
+WinoGrande      | 87.45
+ARC-e           | 94.61
+ARC-c           | 85.84
+OBQA            | 89.60
+------------------------------
+Avg.            | 86.79
