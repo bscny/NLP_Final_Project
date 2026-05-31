@@ -1,4 +1,5 @@
 import sys
+import os
 import re
 import torch
 from tqdm import tqdm
@@ -66,6 +67,9 @@ def format_and_tokenize(sample, tokenizer):
 # Custom Logger to write to both Terminal and File
 class DualLogger:
     def __init__(self, filepath):
+        # Create parent directories if they don't exist
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        
         self.terminal = sys.stdout
         self.log = open(filepath, "w", encoding="utf-8")
         self.file_buffer = ""

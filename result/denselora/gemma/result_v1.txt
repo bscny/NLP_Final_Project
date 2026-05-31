@@ -2,7 +2,7 @@
 STARTING EVALUATION PIPELINE
 ====================
 Evaluating BoolQ......
-Evaluating Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 205/205 [05:38<00:00,  1.65s/it]
+Evaluating Batches: 100%|##########| 205/205 [05:38<00:00,  1.65s/it]
 --- Evaluation Complete ---
 Total evaluated : 3270
 Correct         : 2328
@@ -10,7 +10,7 @@ Unparsed        : 0
 Accuracy        : 71.19%
 
 Evaluating PIQA......
-Evaluating Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 115/115 [03:19<00:00,  1.74s/it]
+Evaluating Batches: 100%|##########| 115/115 [03:19<00:00,  1.74s/it]
 --- Evaluation Complete ---
 Total evaluated : 1838
 Correct         : 1658
@@ -18,7 +18,7 @@ Unparsed        : 0
 Accuracy        : 90.21%
 
 Evaluating SIQA......
-Evaluating Batches: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 123/123 [01:34<00:00,  1.30it/s]
+Evaluating Batches: 100%|##########| 123/123 [01:34<00:00,  1.30it/s]
 --- Evaluation Complete ---
 Total evaluated : 1954
 Correct         : 1625
@@ -26,7 +26,7 @@ Unparsed        : 0
 Accuracy        : 83.16%
 
 Evaluating HellaSwag......
-Evaluating Batches: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████| 628/628 [57:58<00:00,  5.54s/it]
+Evaluating Batches: 100%|##########| 628/628 [57:58<00:00,  5.54s/it]
 --- Evaluation Complete ---
 Total evaluated : 10042
 Correct         : 9581
@@ -34,7 +34,7 @@ Unparsed        : 0
 Accuracy        : 95.41%
 
 Evaluating WinoGrande......
-Evaluating Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 80/80 [00:47<00:00,  1.69it/s]
+Evaluating Batches: 100%|##########| 80/80 [00:47<00:00,  1.69it/s]
 --- Evaluation Complete ---
 Total evaluated : 1267
 Correct         : 1123
@@ -42,7 +42,7 @@ Unparsed        : 0
 Accuracy        : 88.63%
 
 Evaluating ARC-e......
-Evaluating Batches: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 149/149 [09:11<00:00,  3.70s/it]
+Evaluating Batches: 100%|##########| 149/149 [09:11<00:00,  3.70s/it]
 --- Evaluation Complete ---
 Total evaluated : 2376
 Correct         : 2302
@@ -50,7 +50,7 @@ Unparsed        : 0
 Accuracy        : 96.89%
 
 Evaluating ARC-c......
-Evaluating Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 74/74 [03:15<00:00,  2.65s/it]
+Evaluating Batches: 100%|##########| 74/74 [03:15<00:00,  2.65s/it]
 --- Evaluation Complete ---
 Total evaluated : 1172
 Correct         : 1059
@@ -58,7 +58,7 @@ Unparsed        : 0
 Accuracy        : 90.36%
 
 Evaluating OBQA......
-Evaluating Batches: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 32/32 [01:06<00:00,  2.09s/it]
+Evaluating Batches: 100%|##########| 32/32 [01:06<00:00,  2.09s/it]
 --- Evaluation Complete ---
 Total evaluated : 500
 Correct         : 458
