@@ -2,7 +2,7 @@
 
 IMPORTANT: This is the unofficial implementation of the ACL 2025 accepted paper [DenseLoRA: Dense Low-Rank Adaptation of Large Language Models](https://aclanthology.org/2025.acl-long.503.pdf), we selected this paper as our 2026 spring Natural Language Processing final project at Department of Computer science, NCCU
 
-[[Final Presentation Slide](docs/Presentation.pdf)] [[Final Report](docs/Final_Report.pdf)]
+[[Final Presentation Slide](docs/Presentation.pdf) ([canva version](https://www.canva.com/design/DAHIuorXokU/aA4LX-1WTjx0kC-ysSiJcQ/edit))] [[Final Report](docs/Final_Report.pdf)]
 
 ## Table of Content
 
