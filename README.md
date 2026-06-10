@@ -1,10 +1,67 @@
-# NLP_Final_Project
+# DenseLoRA: Dense Low-Rank Adaptation of Large Language Models
+
+IMPORTANT: This is the unofficial implementation of the ACL 2025 accepted paper [DenseLoRA: Dense Low-Rank Adaptation of Large Language Models](https://aclanthology.org/2025.acl-long.503.pdf), we selected this paper as our 2026 spring Natural Language Processing final project at Department of Computer science, NCCU
+
+[[Final Presentation Slide](docs/Presentation.pdf)] [[Final Report](docs/Final_Reoort.pdf)]
 
 ## Table of Content
 
+- [Introduction](#introduction)
+- [Take a Glance at the Result](#take-a-glance-at-the-result)
 - [Instruction Steps](#instruction-steps)
-- [Result Overview](#result-overview)
 - [File Structure](#file-structure)
+
+## Introduction
+
+In this section, we introduce you what we have done on this project briefly:
+1. We understood the core concept behind the paper and started implementing it via `PyTorch`
+2. We gathered the required datasets and finetune lora on llama-3-8b and gemma-4-e4b as baseline
+3. We conducted the experiment by switching lora to denselora on the exact same modules of the 2 models
+4. We analyzed the result
+6. We made the final slides and report to demonstrate our results, findings, and conclusions. The following section provides a quick view of it
+
+for detailed results, see `/results` and `prelude/result_part2` folders
+
+## Take a Glance at the Result
+
+For both lora and denselora, we use the same hyper params and target {q, k, v, up, down} modules:
+
+| Epochs | Optimizer | LR | Weight Decay | Beta | Batch Size | Warm Up Steps | Max Seq Length |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 2 | AdamW | 0.0003 | 0.01 (default) | (0.9, 0.999) | 16 | 100 | 512 |
+
+| Rank | Alpha | Dropout |
+| --- | --- | --- |
+| 32 | 32 | 0.05 |
+
+The following are the finetune results
+
+![loss](/docs/loss.png)
+
+![grad](/docs/grad_norm.png)
+
+We can see no matter it's loss or grad norm, denselora performs better than lora. Now, lets take a look at the validation result
+
+| Dataset | LLaMA-3-8B (LoRA) | LLaMA-3-8B (DenseLoRa) | Gemma-4-E4B (LoRA) | Gemma-4-E4B (DenseLoRa) |
+| --- | --- | --- | --- | --- |
+| BoolQ | 71.65 | **74.80** | 71.22 | **71.19** |
+| PIQA | 84.71 | **90.75** | 89.66 | **90.21** |
+| SIQA | 79.53 | **82.55** | 81.68 | **83.16** |
+| HellaSwag | 93.10 | **96.52** | 94.24 | **95.41** |
+| WinoGrande | 83.74 | **88.79** | 87.45 | **88.63** |
+| ARC-e | 86.45 | **93.43** | 94.61 | **96.89** |
+| ARC-c | 75.09 | **82.85** | 85.84 | **90.36** |
+| OBQA | 80.80 | **90.40** | 89.60 | **91.60** |
+| **Average** | 81.88 | **87.51** | 86.79 | **88.43** |
+
+Denselora is significantly better! Finally, let's see the param efficiency
+
+| Model | Method | Trainable Params | % of Total |
+| --- | --- | --- | --- |
+| LLaMA-3-8B | LoRA | 56,623,104 | 0.7002% |
+|  | DenseLoRa | 1,769,472 | 0.0220% |
+| Gemma-4-E4B | LoRA | 45,907,968 | 0.5748% |
+|  | DenseLoRa | 1,648,640 | 0.0208% |
 
 ## Instruction Steps
 
@@ -47,9 +104,13 @@ data/
 
 ### Finetuning
 
+1. Adjust the hyper-params in `settings.py`
+2. simply `py finetune_lora.py` and `py finetune_denselora.py`
+
 ### Inferencing
 
-## Result Overview
+1. Adjust the hyper-params in `settings.py`
+2. simply `py inference_lora.py` and `py inference_denselora.py`
 
 ## File Structure
 
